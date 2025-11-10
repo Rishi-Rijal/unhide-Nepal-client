@@ -9,101 +9,13 @@ import {
   ChevronLeft,
   Sparkles,
 } from "lucide-react";
-import { Link } from "react-router-dom";
-
-
-// --- Small reusable UI bits ---
-function Label({ children, htmlFor }) {
-  return (
-    <label htmlFor={htmlFor} className="block text-sm font-medium text-slate-700">
-      {children}
-    </label>
-  );
-}
-
-function Helper({ children }) {
-  return <p className="mt-1 text-xs text-slate-500">{children}</p>;
-}
-
-function Input({ id, ...props }) {
-  return (
-    <input
-      id={id}
-      {...props}
-      className={`w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-200 ${props.className || ""
-        }`}
-    />
-  );
-}
-
-function Textarea({ id, ...props }) {
-  return (
-    <textarea
-      id={id}
-      {...props}
-      className={`w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-200 ${props.className || ""
-        }`}
-    />
-  );
-}
-
-function Pill({ active, children, onClick }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ring-1 transition ${active
-          ? "bg-emerald-50 text-emerald-700 ring-emerald-200"
-          : "bg-white text-slate-600 ring-slate-200 hover:bg-slate-50"
-        }`}
-    >
-      {children}
-    </button>
-  );
-}
-
-function Step({ title, icon: Icon, index, current }) {
-  const state = index < current ? "done" : index === current ? "current" : "todo";
-  const base = "flex flex-col items-center gap-2 min-w-[84px]";
-  const circle =
-    state === "done"
-      ? "bg-emerald-600 text-white"
-      : state === "current"
-        ? "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"
-        : "bg-white text-slate-500 ring-1 ring-slate-200";
-  return (
-    <div className={base}>
-      <div className={`flex h-10 w-10 items-center justify-center rounded-full ${circle}`}>
-        <Icon className="h-5 w-5" />
-      </div>
-      <div className="text-xs font-medium text-slate-600 text-center max-w-[90px] leading-tight">
-        {title}
-      </div>
-    </div>
-  );
-}
-
-function Stepper({ current }) {
-  const steps = [
-    { title: "Details", icon: Info },
-    { title: "Location", icon: MapPin },
-    { title: "Photos", icon: ImageIcon },
-    { title: "Tips", icon: Sparkles },
-    { title: "Review & Submit", icon: FileCheck2 },
-  ];
-  return (
-    <div className="flex items-center justify-center md:gap-4 gap-1">
-      {steps.map((s, i) => (
-        <React.Fragment key={s.title}>
-          <Step title={s.title} icon={s.icon} index={i} current={current} />
-          {i !== steps.length - 1 && (
-            <div className="hidden sm:block h-px w-12 bg-slate-200" />
-          )}
-        </React.Fragment>
-      ))}
-    </div>
-  );
-}
+import PhotoUploader from "./Components/AddListing/PhotoUploader";
+import Label from "./Components/Shared/Label";
+import Helper from "./Components/Shared/Helper";
+import Input from "./Components/Shared/Input";
+import Textarea from "./Components/Shared/Textarea";
+import Pill from "./Components/Shared/Pill";
+import Stepper from "./Components/AddListing/Stepper";
 
 // --- Main component ---
 export default function NewListing() {
@@ -118,7 +30,7 @@ export default function NewListing() {
     latitude: "",
     longitude: "",
     // photos
-    photos: [],
+    photos: [], // will store File objects
     // tips
     tips: {
       permits: true,
@@ -148,15 +60,34 @@ export default function NewListing() {
     });
   }
 
+  const [errors, setErrors] = React.useState({});
+
+  function validateStep(s) {
+    const errs = {};
+    if (s === 0) {
+      if (!form.name || !form.name.trim()) errs.name = "Please enter a name.";
+      if (!form.description || !form.description.trim()) errs.description = "Please add a short description.";
+    }
+    if (s === 1) {
+      if (!form.latitude || Number.isNaN(Number(form.latitude))) errs.latitude = "Valid latitude required.";
+      if (!form.longitude || Number.isNaN(Number(form.longitude))) errs.longitude = "Valid longitude required.";
+    }
+    if (s === 2) {
+      if (!form.photos || form.photos.length === 0) errs.photos = "Please upload at least one photo.";
+    }
+    if (s === 3) {
+      if (!form.tips || !form.tips.difficulty) errs.difficulty = "Please select difficulty.";
+    }
+    return errs;
+  }
+
   function next() {
-    if (step === 0) {
-      // Simple validation for details
-      if (!form.name || !form.description) return alert("Please fill name and description.");
+    const errs = validateStep(step);
+    if (Object.keys(errs).length) {
+      setErrors(errs);
+      return;
     }
-    if (step === 1) {
-      if (!form.latitude || !form.longitude)
-        return alert("Please provide latitude and longitude (temporary until Mapbox is wired).");
-    }
+    setErrors({});
     setStep((s) => Math.min(s + 1, 4));
   }
   function back() {
@@ -165,9 +96,28 @@ export default function NewListing() {
 
   function handleSubmit(e) {
     e?.preventDefault();
-    // TODO: replace with real API call
-    alert("Listing submitted!\n" + JSON.stringify(form, null, 2));
+    // validate all steps before submit
+    const allErrs = {
+      ...validateStep(0),
+      ...validateStep(1),
+      ...validateStep(2),
+      ...validateStep(3),
+    };
+    if (Object.keys(allErrs).length) {
+      setErrors(allErrs);
+      // jump to first errored step
+      if (allErrs.name || allErrs.description || allErrs.tags) setStep(0);
+      else if (allErrs.latitude || allErrs.longitude) setStep(1);
+      else if (allErrs.photos) setStep(2);
+      else if (allErrs.difficulty) setStep(3);
+      return;
+    }
+    setErrors({});
+    // TODO: replace with real API call that sends FormData including photos
+    alert("Listing submitted!\n" + JSON.stringify({ ...form, photos: form.photos.map((f) => f.name) }, null, 2));
   }
+
+    
 
   return (
     <main className=" mt-10 bg-slate-50 min-h-screen py-10">
@@ -197,6 +147,7 @@ export default function NewListing() {
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                     placeholder="Everest Base Camp Trek"
                   />
+                  {errors.name && <p className="mt-1 text-xs text-rose-600">{errors.name}</p>}
                 </div>
                 <div>
                   <Label htmlFor="desc">Short Description</Label>
@@ -207,6 +158,7 @@ export default function NewListing() {
                     onChange={(e) => setForm({ ...form, description: e.target.value })}
                     placeholder="What makes it special?"
                   />
+                  {errors.description && <p className="mt-1 text-xs text-rose-600">{errors.description}</p>}
                 </div>
                 <div>
                   <Label htmlFor="category">Category</Label>
@@ -254,6 +206,7 @@ export default function NewListing() {
                     onChange={(e) => setForm({ ...form, latitude: e.target.value })}
                   />
                   <Helper>Paste from map until auto‑picker is added.</Helper>
+                  {errors.latitude && <p className="mt-1 text-xs text-rose-600">{errors.latitude}</p>}
                 </div>
                 <div>
                   <Label htmlFor="lng">Longitude</Label>
@@ -263,6 +216,7 @@ export default function NewListing() {
                     value={form.longitude}
                     onChange={(e) => setForm({ ...form, longitude: e.target.value })}
                   />
+                  {errors.longitude && <p className="mt-1 text-xs text-rose-600">{errors.longitude}</p>}
                 </div>
               </div>
 
@@ -284,36 +238,11 @@ export default function NewListing() {
               </header>
 
               <div className="mt-6">
-                <label
-                  htmlFor="photos"
-                  className="flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-8 text-center hover:bg-slate-100"
-                >
-                  <ImageIcon className="h-8 w-8 text-slate-400" />
-                  <div className="text-sm text-slate-600">
-                    Drag & drop or <span className="font-semibold">browse</span> to upload
-                  </div>
-                  <input
-                    id="photos"
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      const files = Array.from(e.target.files || []);
-                      setForm({ ...form, photos: files.map((f) => f.name) });
-                    }}
-                  />
-                </label>
-
-                {form.photos.length > 0 && (
-                  <ul className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-600">
-                    {form.photos.map((p) => (
-                      <li key={p} className="truncate rounded-md bg-white px-3 py-2 ring-1 ring-slate-200">
-                        {p}
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                <PhotoUploader
+                  photos={form.photos}
+                  setPhotos={(photos) => setForm((f) => ({ ...f, photos }))}
+                />
+                {errors.photos && <p className="mt-2 text-xs text-rose-600">{errors.photos}</p>}
               </div>
             </section>
           )}
@@ -359,6 +288,7 @@ export default function NewListing() {
                       <option>Moderate</option>
                       <option>Challenging</option>
                     </select>
+                      {errors.difficulty && <p className="mt-1 text-xs text-rose-600">{errors.difficulty}</p>}
                   </div>
                 </div>
                 <div>
@@ -413,12 +343,13 @@ export default function NewListing() {
           )}
 
           {/* Nav buttons */}
-          <div className="mt-8 flex items-center justify-between">
+          <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
             <button
               type="button"
               onClick={back}
               disabled={step === 0}
-              className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm disabled:opacity-50"
+              aria-disabled={step === 0}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm disabled:opacity-50"
             >
               <ChevronLeft className="h-4 w-4" /> Back
             </button>
@@ -427,7 +358,7 @@ export default function NewListing() {
               <button
                 type="button"
                 onClick={next}
-                className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"
               >
                 Next Step <ChevronRight className="h-4 w-4" />
               </button>
@@ -435,7 +366,7 @@ export default function NewListing() {
               <button
                 type="button"
                 onClick={handleSubmit}
-                className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"
               >
                 <CheckCircle2 className="h-4 w-4" /> Submit Listing
               </button>

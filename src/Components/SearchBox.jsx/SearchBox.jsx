@@ -1,21 +1,43 @@
 import Button from '../Button/Button';
 import { Search, LocateFixed, Plus } from "lucide-react";
 
-const SearchBox = ({ handleClick, className }) => {
-  return (
-    <div className={` flex max-w-xl items-center rounded-2xl bg-white p-2 shadow-lg ring-1 ring-slate-200 ${className}`}>
 
-      <Search className="ml-1 mt-4 left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+export function SearchBox({
+  value,
+  onChange,
+  placeholder = "Search…",
+  className,
+  containerClassName,
+  trailing,
+  leftIcon,
+}) {
+  return (
+    <div className={`relative flex w-full max-w-2xl items-center rounded-2xl bg-white shadow-lg ring-1 ring-emerald-200/50 transition-all duration-200 hover:shadow-xl hover:ring-emerald-300/50 ${containerClassName}`}>
+      {leftIcon ? (
+        <div className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+          {leftIcon}
+        </div>
+      ) : null}
+
       <input
-        placeholder="Search places, trails, or waterfalls..."
-        className="ml-5 w-full rounded-xl border-0 px-2 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none"
+        type="text"
+        inputMode="search"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className={
+          `w-full bg-transparent py-3.5 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none ${leftIcon ? "pl-11" : "pl-5"} ${trailing ? "pr-40" : "pr-5"} ${className}`
+        }
       />
 
-      <Button className="ml-3" onClick={handleClick}>
-        Search
-      </Button>
+      {/* trailing slot (e.g., your 'Use my location' button) */}
+      {trailing ? (
+        <div className="absolute right-2 top-1/2 -translate-y-1/2">
+          {trailing}
+        </div>
+      ) : null}
     </div>
   );
-};
+}
 
 export default SearchBox;
