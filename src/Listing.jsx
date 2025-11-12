@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import HeroSection from "./Components/Listing/HeroSection";
 import OverviewSection from "./Components/Listing/OverviewSection";
 import LocationSection from "./Components/Listing/LocationSection";
@@ -8,7 +9,8 @@ import ReviewsSection from "./Components/Listing/ReviewsSection";
 import RelatedSection from "./Components/Listing/RelatedSection";
 
 export default function Listing() {
-  const listing = {
+  const [listing, setListing] = useState({
+    id: "annapurna-abc",
     title: "Annapurna Base Camp",
     hero:
       "https://images.unsplash.com/photo-1642156456271-458c1d19af24?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGFubmFwdXJuYSUyMGJhc2UlMjBjYW1wfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=900",
@@ -87,7 +89,15 @@ export default function Listing() {
         reviews: 680,
       },
     ],
-  };
+  });
+
+  function addReview(r) {
+    setListing((prev) => {
+      const reviews = [...prev.reviews, r];
+      const rating = reviews.reduce((s, x) => s + (x.rating || 0), 0) / reviews.length;
+      return { ...prev, reviews, rating: Math.round(rating * 10) / 10, reviewsCount: (prev.reviewsCount || 0) + 1 };
+    });
+  }
 
   return (
     <main className="bg-white">
@@ -101,7 +111,7 @@ export default function Listing() {
       <LocationSection locationImage={listing.locationImage} title={listing.title} />
       <TipsSection tips={listing.tips} />
       <GallerySection gallery={listing.gallery} />
-      <ReviewsSection reviews={listing.reviews} />
+      <ReviewsSection reviews={listing.reviews} onAddReview={addReview} />
       <RelatedSection related={listing.related} />
       <div className="h-12" />
     </main>
