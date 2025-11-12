@@ -1,10 +1,16 @@
 import { Star, MapPin } from "lucide-react";
+import FavoriteButton from "../FavoriteButton/FavoriteButton";
 
-export default function PlaceCard({ image, title, district, rating = 0, tags = [], description }) {
+export default function PlaceCard({ id, image, title, district, rating = 0, tags = [], description }) {
+  const item = { id: id || title, title, image };
+
   return (
     <div className="bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 overflow-hidden hover:shadow-md transition-shadow">
-      <div className="h-44 w-full overflow-hidden">
+      <div className="h-44 w-full overflow-hidden relative">
         <img src={image} alt={title} className="h-44 w-full object-cover" />
+        <div className="absolute top-3 right-3">
+          <FavoriteButton item={item} />
+        </div>
       </div>
       <div className="p-4">
         <div className="flex items-center justify-between">
@@ -34,4 +40,5 @@ export default function PlaceCard({ image, title, district, rating = 0, tags = [
         {description && <p className="mt-3 text-sm text-slate-600 line-clamp-3">{description}</p>}
       </div>
     </div>
-  );}
+  );
+}
