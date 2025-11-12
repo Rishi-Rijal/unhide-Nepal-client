@@ -29,7 +29,8 @@ const Header = () => {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-8 text-sm">
+        <nav className="hidden md:flex items-center gap-10 text-sm">
+          <Link to="/" className="text-slate-600 hover:text-cyan-700">Home</Link>
           <Link to="/Explore" className="text-slate-600 hover:text-cyan-700">Explore</Link>
           <Link to="/Listing/New" className="text-slate-600 hover:text-cyan-700">Add Place</Link>
           <Link to="#about" className="text-slate-600 hover:text-cyan-700">About</Link>
@@ -62,6 +63,7 @@ const Header = () => {
       {open && (
         <div className="md:hidden border-t border-slate-200 bg-white/95 backdrop-blur">
           <nav className="px-4 py-3 flex flex-col items-start gap-2 text-sm">
+            <Link onClick={() => setOpen(false)} to="/" className="py-2 text-slate-700 hover:text-cyan-700">Home</Link>
             <Link onClick={() => setOpen(false)} to="/Explore" className="py-2 text-slate-700 hover:text-cyan-700">Explore</Link>
             <Link onClick={() => setOpen(false)} to="/Listing/New" className="py-2 text-slate-700 hover:text-cyan-700">Add Place</Link>
             <Link onClick={() => setOpen(false)} to="#about" className="py-2 text-slate-700 hover:text-cyan-700">About</Link>
