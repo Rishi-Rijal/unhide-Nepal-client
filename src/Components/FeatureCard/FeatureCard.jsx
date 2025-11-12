@@ -9,7 +9,7 @@ const FeatureCard = ({ image, tag, title, rating }) => (
     <div className="space-y-2 p-4">
       <Badge>{tag}</Badge>
       <h3 className="text-sm font-semibold text-slate-800">{title}</h3>
-      <StarRating rating={rating} />
+      <StarRating value={rating} readonly={true} />
     </div>
   </div>
 );
