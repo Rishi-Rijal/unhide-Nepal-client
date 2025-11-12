@@ -14,8 +14,12 @@ import Label from "./Components/Shared/Label";
 import Helper from "./Components/Shared/Helper";
 import Input from "./Components/Shared/Input";
 import Textarea from "./Components/Shared/Textarea";
-import Pill from "./Components/Shared/Pill";
 import Stepper from "./Components/AddListing/Stepper";
+import GROUPS from "./utils/groups";
+import CategoryDropdown from "./Components/CategoryDropdown.jsx";
+
+const uniq = (arr) => Array.from(new Set(arr));
+const tagsFor = (categories) => uniq(categories.flatMap((c) => GROUPS[c] || []));
 
 // --- Main component ---
 export default function NewListing() {
@@ -24,8 +28,8 @@ export default function NewListing() {
     name: "Everest Base Camp Trek",
     description:
       "An iconic trek offering breathtaking views of the world's highest peak and an immersive cultural experience in the Sherpa villages. Prepare for challenging terrain and unpredictable weather.",
-    category: "Adventure",
-    tags: ["Hiking", "Photography", "Camping"],
+    categories: [],
+    tags: [],
     // location
     latitude: "",
     longitude: "",
@@ -39,26 +43,32 @@ export default function NewListing() {
       extra: "Carry cash; ATMs are limited along the trail.",
     },
   });
-
-  const allTags = [
-    "Hiking",
-    "Waterfalls",
-    "Temples",
-    "Local Cuisine",
-    "Wildlife Spotting",
-    "Family Friendly",
-    "Photography",
-    "Camping",
-    "Spiritual",
-    "Historical",
-  ];
-
-  function toggleTag(tag) {
-    setForm((f) => {
-      const has = f.tags.includes(tag);
-      return { ...f, tags: has ? f.tags.filter((t) => t !== tag) : [...f.tags, tag] };
+  const categoryGroups = React.useMemo(() => ({ Categories: Object.keys(GROUPS) }), []);
+  const tagGroups = React.useMemo(() => {
+    if (form.categories.length === 0) return {};
+    const out = {};
+    form.categories.forEach((c) => {
+      out[c] = GROUPS[c] || [];
     });
-  }
+    return out;
+  }, [form.categories]);
+
+  const handleCategoriesChange = (nextCategories) => {
+    const validTags = tagsFor(nextCategories);
+    setForm((prev) => ({
+      ...prev,
+      categories: nextCategories,
+      tags: prev.tags.filter((t) => validTags.includes(t)), // prune invalid tags
+    }));
+  };
+
+  const handleTagsChange = (nextTags) => {
+    const valid = tagsFor(form.categories);
+    setForm((prev) => ({
+      ...prev,
+      tags: nextTags.filter((t) => valid.includes(t)), // guard against stale/invalid tags
+    }));
+  };
 
   const [errors, setErrors] = React.useState({});
 
@@ -117,7 +127,7 @@ export default function NewListing() {
     alert("Listing submitted!\n" + JSON.stringify({ ...form, photos: form.photos.map((f) => f.name) }, null, 2));
   }
 
-    
+
 
   return (
     <main className=" mt-10 bg-slate-50 min-h-screen py-10">
@@ -144,6 +154,7 @@ export default function NewListing() {
                   <Input
                     id="name"
                     value={form.name}
+                    autoComplete="off"
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                     placeholder="Everest Base Camp Trek"
                   />
@@ -160,29 +171,33 @@ export default function NewListing() {
                   />
                   {errors.description && <p className="mt-1 text-xs text-rose-600">{errors.description}</p>}
                 </div>
-                <div>
-                  <Label htmlFor="category">Category</Label>
-                  <select
-                    id="category"
-                    className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200"
-                    value={form.category}
-                    onChange={(e) => setForm({ ...form, category: e.target.value })}
-                  >
-                    <option>Adventure</option>
-                    <option>Nature</option>
-                    <option>Culture</option>
-                    <option>Relaxation</option>
-                    <option>Pilgrimage</option>
-                  </select>
-                </div>
-                <div>
-                  <Label>Tags (What makes it special?)</Label>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {allTags.map((t) => (
-                      <Pill key={t} active={form.tags.includes(t)} onClick={() => toggleTag(t)}>
-                        {t}
-                      </Pill>
-                    ))}
+                <div className="space-y-6">
+                  {/* Categories */}
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1" >Categories</label>
+                    <CategoryDropdown
+                      groups={categoryGroups}
+                      value={form.categories}
+                      onChange={handleCategoriesChange}
+                      placeholder="Select categories…"
+                      widthClassName="w-full"
+                    />
+                  </div>
+
+                  {/* Tags (dependent on categories) */}
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Tags</label>
+                    <CategoryDropdown
+                      groups={tagGroups}
+                      value={form.tags}
+                      onChange={handleTagsChange}
+                      placeholder={form.categories.length ? "Select tags…" : "Pick categories first…"}
+                      disabled={form.categories.length === 0}
+                      widthClassName="w-full"
+                    />
+                    {form.tags.length > 0 && (
+                      <p className="mt-2 text-xs text-slate-500">Selected tags: {form.tags.join(", ")}</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -288,7 +303,7 @@ export default function NewListing() {
                       <option>Moderate</option>
                       <option>Challenging</option>
                     </select>
-                      {errors.difficulty && <p className="mt-1 text-xs text-rose-600">{errors.difficulty}</p>}
+                    {errors.difficulty && <p className="mt-1 text-xs text-rose-600">{errors.difficulty}</p>}
                   </div>
                 </div>
                 <div>
