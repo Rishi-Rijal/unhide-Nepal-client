@@ -11,11 +11,11 @@ export default function Stepper({ current }) {
     { title: "Review & Submit", icon: FileCheck2 },
   ];
   return (
-    <div className="flex items-center justify-center md:gap-4 gap-2 overflow-x-auto py-2">
+    <div className="flex items-center gap-3 md:gap-4 overflow-x-auto py-2 px-4 scroll-px-4 justify-start md:justify-center">
       {steps.map((s, i) => (
         <React.Fragment key={s.title}>
           <Step title={s.title} icon={s.icon} index={i} current={current} />
-          {i !== steps.length - 1 && <div className="hidden sm:block h-px w-12 bg-slate-200" />}
+          {i !== steps.length - 1 && <div className="hidden sm:block h-px w-5 bg-slate-200" />}
         </React.Fragment>
       ))}
     </div>
