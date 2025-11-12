@@ -6,6 +6,7 @@ import NewListing from './AddListing.jsx'
 import Listing from './Listing.jsx'
 import LoginPage from './Login.jsx'
 import RegisterPage from './Register.jsx'
+import Wishlist from './Wishlist.jsx'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from './Components/Layout/Layout.jsx';
 
@@ -20,6 +21,7 @@ const App = () => {
           <Route path="/Explore" element={<ExplorePlaces />} />
           <Route path="/Listing/New" element={<NewListing />} />
           <Route path="/Listing/:id" element={<Listing />} />
+          <Route path="/Wishlist" element={<Wishlist />} />
           <Route path="/Login" element={<LoginPage />} />
           <Route path="/Register" element={<RegisterPage />} />
         </Route>
