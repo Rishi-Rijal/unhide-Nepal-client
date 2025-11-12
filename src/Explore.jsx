@@ -1,16 +1,11 @@
 
 import { useRef, useState, useMemo } from "react";
 import { LocateFixed, Plus, Search } from "lucide-react";
+import { Link } from "react-router-dom";
 import PlaceCard from "./Components/PlaceCard/PlaceCard";
 import SearchBox from "./Components/SearchBox.jsx/SearchBox";
 import CategoryDropdown from "./Components/CategoryDropdown.jsx";
-
-// Extracted constants
-const GROUPS = {
-  Nature: ["Lake", "Mountains", "Wildlife", "Nature"],
-  Culture: ["Culture", "Festivals", "Heritage", "Food"],
-  Adventure: ["Trekking", "Adventure", "Rafting", "Paragliding"],
-};
+import GROUPS from "./utils/groups.js";
 
 const PLACES = [
   {
@@ -98,16 +93,15 @@ const PLACES = [
 // FilterControls component
 function FilterControls({ locationQuery, setLocationQuery, rating, setRating, distance, setDistance, onUseMyLocation, onSearch }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white/60 backdrop-blur supports-[backdrop-filter]:bg-white/40 p-3 md:p-4">
+    <div className=" relative z-2 rounded-xl border border-slate-200 bg-white/60 backdrop-blur supports-[backdrop-filter]:bg-white/40 p-3 md:p-4">
       <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto] md:items-center gap-3">
         {/* Location input */}
-        <div className="relative">
-          <label htmlFor="location" className="sr-only">Search location</label>
+        <div className="relative  ">
           <SearchBox
             value={locationQuery}
             onChange={setLocationQuery}
             placeholder="Search location (city, address, landmark)"
-            containerClassName="w-full md:w-[420px] lg:w-[480px]"
+            containerClassName="w-full mw-full max-w-[480px]"
             trailing={
               <button type="button" onClick={onUseMyLocation}
                 className="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-600/40"
@@ -138,20 +132,20 @@ function FilterControls({ locationQuery, setLocationQuery, rating, setRating, di
             id="rating"
             value={rating}
             onChange={(e) => setRating(e.target.value)}
-            className="rounded-lg border border-slate-200 bg-white py-2.5 px-3 text-sm shadow-sm focus:outline-none hover:bg-slate-50"
+            className="rounded-lg border border-slate-200 bg-white py-2.5 px-3 text-xs shadow-sm focus:outline-none hover:bg-slate-50"
           >
             <option value="any">Any rating</option>
             <option value="4+">4★ and up</option>
+            <option value="3+">3★ and up</option>
             <option value="5">5★ only</option>
           </select>
         </div>
       </div>
       {/* Distance + Search Row */}
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <label htmlFor="distance" className="text-xs text-slate-600">
-            Distance:{" "}
-            <span className="font-semibold text-slate-800">{distance} km</span>
+        <div className="flex flex-col items-start gap-1">
+          <label htmlFor="distance" className="pb-1 text-xs text-slate-600">
+            Distance: <span className="font-semibold text-slate-800">{distance} km</span>
           </label>
           <input
             id="distance"
@@ -162,10 +156,6 @@ function FilterControls({ locationQuery, setLocationQuery, rating, setRating, di
             value={distance}
             onChange={(e) => setDistance(Number(e.target.value))}
             className="h-1 w-56 rounded-full accent-emerald-600"
-            aria-valuemin={1}
-            aria-valuemax={250}
-            aria-valuenow={distance}
-            aria-label="Search radius in kilometers"
           />
         </div>
         <button
@@ -185,8 +175,8 @@ function FilterControls({ locationQuery, setLocationQuery, rating, setRating, di
 // MapPlaceholder component
 function MapPlaceholder({ mapRef }) {
   return (
-    <div className="hidden lg:block">
-      <div className="relative h-[340px] overflow-hidden rounded-2xl border border-slate-200 bg-slate-100/70 shadow-sm">
+    <div className="relative z-0 lg:block">
+      <div className="h-[340px] overflow-hidden rounded-2xl border border-slate-200 bg-slate-100/70 shadow-sm">
         {/* Vacant area for Mapbox mount */}
         <div ref={mapRef} className="absolute inset-0" />
         <div className="absolute inset-0 flex items-center justify-center p-4 text-center">
@@ -251,12 +241,13 @@ export default function Explore() {
           <PlaceCardsGrid places={places} />
         </div>
       </div>
-      <button
+      <Link
+        to="/Listing/New"
         className="fixed bottom-11 right-6 inline-flex items-center gap-2 rounded-full bg-rose-600 px-5 py-3 text-sm font-semibold text-white shadow-lg hover:bg-rose-700"
         aria-label="Add Place"
       >
         <Plus className="h-4 w-4" /> Add Place
-      </button>
+      </Link>
     </main>
   );
 }
