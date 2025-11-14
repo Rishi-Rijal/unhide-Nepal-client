@@ -8,9 +8,8 @@ import CategoryDropdown from "./Components/CategoryDropdown.jsx";
 import GROUPS from "./utils/groups.js";
 import axios from "axios";
 
-const REVERSE_GEOMAPING_KEY = import.meta.env.VITE_REVERSE_GEOMAPING_KEY 
+const REVERSE_GEOMAPING_KEY = import.meta.env.VITE_REVERSE_GEOMAPING_KEY
 
-console.log("Reverse Geomapping Key: ", REVERSE_GEOMAPING_KEY);
 
 const PLACES = [
   {
@@ -236,8 +235,6 @@ export default function Explore() {
       setError("Geolocation is not supported by your browser");
       return;
     }
-
-
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
@@ -248,8 +245,9 @@ export default function Explore() {
       },
       (err) => {
         setError(err.message);
-      }
-    );
+      },
+      { enableHighAccuracy: true, timeout: 5000 }
+    )
   };
 
   // TODO: Implement search logic
