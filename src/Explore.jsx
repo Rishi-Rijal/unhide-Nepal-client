@@ -10,6 +10,8 @@ import axios from "axios";
 
 const REVERSE_GEOMAPING_KEY = import.meta.env.VITE_REVERSE_GEOMAPING_KEY 
 
+console.log("Reverse Geomapping Key:", REVERSE_GEOMAPING_KEY);
+
 const PLACES = [
   {
     title: "Phoksundo Lake",
