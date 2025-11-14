@@ -29,7 +29,7 @@ const PLACES = [
     image:
       "https://images.unsplash.com/photo-1549880181-56a44cf4a9a7?q=80&w=2070&auto=format&fit=crop",
     description:
-      "A world‑renowned trekking destination offering breathtaking Himalayan vistas.",
+      "A world-renowned trekking destination offering breathtaking Himalayan vistas.",
   },
   {
     title: "Chitwan National Park",
