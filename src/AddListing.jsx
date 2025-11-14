@@ -17,6 +17,7 @@ import Textarea from "./Components/Shared/Textarea";
 import Stepper from "./Components/AddListing/Stepper";
 import GROUPS from "./utils/groups";
 import CategoryDropdown from "./Components/CategoryDropdown.jsx";
+import MapView from "./Map.jsx";
 
 const uniq = (arr) => Array.from(new Set(arr));
 const tagsFor = (categories) => uniq(categories.flatMap((c) => GROUPS[c] || []));
@@ -126,6 +127,10 @@ export default function NewListing() {
     // TODO: replace with real API call that sends FormData including photos
     alert("Listing submitted!\n" + JSON.stringify({ ...form, photos: form.photos.map((f) => f.name) }, null, 2));
   }
+  const parseNumberOrNull = (value) => {
+    const n = Number(value);
+    return value === "" || Number.isNaN(n) ? null : n;
+  };
 
 
 
@@ -218,9 +223,14 @@ export default function NewListing() {
                     id="lat"
                     placeholder="27.9878"
                     value={form.latitude}
-                    onChange={(e) => setForm({ ...form, latitude: e.target.value })}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        latitude: e.target.value,
+                      }))
+                    }
                   />
-                  <Helper>Paste from map until auto‑picker is added.</Helper>
+                  &nbsp;
                   {errors.latitude && <p className="mt-1 text-xs text-rose-600">{errors.latitude}</p>}
                 </div>
                 <div>
@@ -229,21 +239,40 @@ export default function NewListing() {
                     id="lng"
                     placeholder="86.9250"
                     value={form.longitude}
-                    onChange={(e) => setForm({ ...form, longitude: e.target.value })}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        longitude: e.target.value,
+                      }))
+                    }
                   />
                   {errors.longitude && <p className="mt-1 text-xs text-rose-600">{errors.longitude}</p>}
                 </div>
               </div>
 
-              {/* Mapbox placeholder container */}
-              <div className="mt-6 h-64 rounded-xl border border-dashed border-slate-300 bg-slate-50 grid place-items-center">
-                <div className="text-center">
-                  <MapPin className="mx-auto h-6 w-6 text-slate-400" />
-                  <p className="mt-2 text-xs text-slate-500">Map placeholder — mount Mapbox GL here later.</p>
-                </div>
-              </div>
+              {(() => {
+                const latNum = parseNumberOrNull(form.latitude);
+                const lngNum = parseNumberOrNull(form.longitude);
+
+                return (
+                  <MapView
+                    mode="select"
+                    lat={latNum ?? 27.7172}
+                    lng={lngNum ?? 85.324}
+                    onLocationSelected={(lat, lng) => {
+                      setForm((f) => ({
+                        ...f,
+                        latitude: lat.toFixed(6),
+                        longitude: lng.toFixed(6),
+                      }));
+                    }}
+                  />
+                );
+              })()}
             </section>
           )}
+
+
 
           {step === 2 && (
             <section>
