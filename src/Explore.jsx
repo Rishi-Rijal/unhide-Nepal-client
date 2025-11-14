@@ -6,6 +6,9 @@ import PlaceCard from "./Components/PlaceCard/PlaceCard";
 import SearchBox from "./Components/SearchBox.jsx/SearchBox";
 import CategoryDropdown from "./Components/CategoryDropdown.jsx";
 import GROUPS from "./utils/groups.js";
+import axios from "axios";
+
+const REVERSE_GEOMAPING_KEY = import.meta.env.VITE_REVERSE_GEOMAPING_KEY 
 
 const PLACES = [
   {
@@ -203,19 +206,48 @@ function PlaceCardsGrid({ places }) {
   );
 }
 
+const getLocationFromLongLat = async (lat, lng) => {
+  const location = await axios.get(`https://us1.locationiq.com/v1/reverse?key=${REVERSE_GEOMAPING_KEY}&lat=${lat}&lon=${lng}&format=json`)
+  return location.data.address;
+}
+
 // Main Explore component
 export default function Explore() {
   const mapRef = useRef(null);
   const [distance, setDistance] = useState(50);
   const [rating, setRating] = useState("any");
   const [locationQuery, setLocationQuery] = useState("");
+  const [location, setLocation] = useState(null);
+  const [error, setError] = useState(null);
 
   // Memoize places and groups if needed for performance
   const places = useMemo(() => PLACES, []);
 
   // TODO: Implement location usage
-  const onUseMyLocation = () => {
-    // TODO: Use browser geolocation and update locationQuery
+  // const onUseMyLocation = () => {
+  //   // TODO: Use browser geolocation and update locationQuery
+  // };
+
+
+  const onUseMyLocation = async () => {
+    if (!navigator.geolocation) {
+      setError("Geolocation is not supported by your browser");
+      return;
+    }
+
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        setLocation({ latitude, longitude });
+        const locationName = await getLocationFromLongLat(latitude, longitude);
+        setLocationQuery(`${locationName?.city_district || locationName?.road || ''} ${locationName?.county || locationName?.state || ''}, ${locationName?.country}`);
+        setError(null);
+      },
+      (err) => {
+        setError(err.message);
+      }
+    );
   };
 
   // TODO: Implement search logic
