@@ -15,6 +15,8 @@ jobs:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
+    env:                                        
+      VITE_REVERSE_GEOMAPING_KEY: ${{ secrets.VITE_REVERSE_GEOMAPING_KEY }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -45,4 +47,5 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ZEALOUS_DESERT_0541D1303 }}
           action: "close"
+
 
