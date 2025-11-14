@@ -255,7 +255,12 @@ export default function NewListing() {
               <div className="mt-6">
                 <PhotoUploader
                   photos={form.photos}
-                  setPhotos={(photos) => setForm((f) => ({ ...f, photos }))}
+                  setPhotos={(next) =>
+                    setForm((f) => ({
+                      ...f,
+                      photos: typeof next === "function" ? next(f.photos) : next,
+                    }))
+                  }
                 />
                 {errors.photos && <p className="mt-2 text-xs text-rose-600">{errors.photos}</p>}
               </div>
