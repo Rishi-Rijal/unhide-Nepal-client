@@ -1,12 +1,13 @@
 
-import { useRef, useState, useMemo } from "react";
-import { LocateFixed, Plus, Search } from "lucide-react";
+import { useRef, useState, useMemo, useEffect } from "react";
+import { LocateFixed, Plus, Search, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import PlaceCard from "./Components/PlaceCard/PlaceCard";
 import SearchBox from "./Components/SearchBox.jsx/SearchBox";
 import CategoryDropdown from "./Components/CategoryDropdown.jsx";
 import GROUPS from "./utils/groups.js";
 import axios from "axios";
+import MapView from "./Map.jsx";
 
 const REVERSE_GEOMAPING_KEY = import.meta.env.VITE_REVERSE_GEOMAPING_KEY
 
@@ -95,30 +96,53 @@ const PLACES = [
 ];
 
 // FilterControls component
-function FilterControls({ locationQuery, setLocationQuery, rating, setRating, distance, setDistance, onUseMyLocation, onSearch }) {
+function FilterControls({
+  locationQuery,
+  setLocationQuery,
+  rating,
+  setRating,
+  distance,
+  setDistance,
+  onUseMyLocation,
+  onSearch,
+  onOpenMapPicker,   
+}) {
   return (
-    <div className=" relative z-2 rounded-xl border border-slate-200 bg-white/60 backdrop-blur supports-[backdrop-filter]:bg-white/40 p-3 md:p-4">
+    <div className="relative z-2 rounded-xl border border-slate-200 bg-white/60 backdrop-blur supports-[backdrop-filter]:bg-white/40 p-3 md:p-4">
       <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto] md:items-center gap-3">
         {/* Location input */}
-        <div className="relative  ">
+        <div className="relative">
           <SearchBox
             value={locationQuery}
             onChange={setLocationQuery}
             placeholder="Search location (city, address, landmark)"
-            containerClassName="w-full mw-full max-w-[480px]"
-            trailing={
-              <button type="button" onClick={onUseMyLocation}
-                className="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-600/40"
-                aria-label="Use my location"
-              >
-                <LocateFixed className="h-3.5 w-3.5" aria-hidden="true" />
-                Use my location
-              </button>
-            }
+            containerClassName="w-full mw-full h-12 max-w-[480px]"
           />
+
+          {/* ⬇️ buttons directly under the search box */}
+          <div className="mt-2 flex flex-wrap gap-2 text-xs">
+            <button
+              type="button"
+              onClick={onUseMyLocation}
+              className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1 font-medium text-slate-700 hover:bg-slate-50"
+            >
+              <LocateFixed className="h-3.5 w-3.5" />
+              Use my location
+            </button>
+
+            <button
+              type="button"
+              onClick={onOpenMapPicker}
+              className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1 font-medium text-slate-700 hover:bg-slate-50"
+            >
+              <MapPin className="h-3.5 w-3.5" />
+              Choose on map
+            </button>
+          </div>
         </div>
+
         {/* Category */}
-        <div className="flex items-center justify-between md:justify-end">
+        <div className="flex items-center hjustify-between relative md:-top-5  md:justify-end">
           <CategoryDropdown
             groups={GROUPS}
             placeholder="Select categories"
@@ -127,8 +151,9 @@ function FilterControls({ locationQuery, setLocationQuery, rating, setRating, di
             showBulkActions
           />
         </div>
+
         {/* Rating */}
-        <div className="flex items-center justify-between md:justify-end">
+        <div className="flex items-center justify-between relative md:-top-5 md:justify-end">
           <label className="sr-only" htmlFor="rating">
             Minimum rating
           </label>
@@ -145,11 +170,15 @@ function FilterControls({ locationQuery, setLocationQuery, rating, setRating, di
           </select>
         </div>
       </div>
+
       {/* Distance + Search Row */}
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-col items-start gap-1">
           <label htmlFor="distance" className="pb-1 text-xs text-slate-600">
-            Distance: <span className="font-semibold text-slate-800">{distance} km</span>
+            Distance:{" "}
+            <span className="font-semibold text-slate-800">
+              {distance} km
+            </span>
           </label>
           <input
             id="distance"
@@ -176,23 +205,7 @@ function FilterControls({ locationQuery, setLocationQuery, rating, setRating, di
   );
 }
 
-// MapPlaceholder component
-function MapPlaceholder({ mapRef }) {
-  return (
-    <div className="relative z-0 lg:block">
-      <div className="h-[340px] overflow-hidden rounded-2xl border border-slate-200 bg-slate-100/70 shadow-sm">
-        {/* Vacant area for Mapbox mount */}
-        <div ref={mapRef} className="absolute inset-0" />
-        <div className="absolute inset-0 flex items-center justify-center p-4 text-center">
-          <div>
-            <div className="mb-2 text-sm uppercase tracking-wide text-slate-500">Map placeholder</div>
-            <p className="text-xs text-slate-600">Mount Mapbox GL on this container later.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+
 
 // PlaceCardsGrid component
 function PlaceCardsGrid({ places }) {
@@ -214,21 +227,14 @@ const getLocationFromLongLat = async (lat, lng) => {
 
 // Main Explore component
 export default function Explore() {
-  const mapRef = useRef(null);
   const [distance, setDistance] = useState(50);
   const [rating, setRating] = useState("any");
   const [locationQuery, setLocationQuery] = useState("");
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
+  const [isMapPickerOpen, setIsMapPickerOpen] = useState(false);
 
-  // Memoize places and groups if needed for performance
   const places = useMemo(() => PLACES, []);
-
-  // TODO: Implement location usage
-  // const onUseMyLocation = () => {
-  //   // TODO: Use browser geolocation and update locationQuery
-  // };
-
 
   const onUseMyLocation = async () => {
     if (!navigator.geolocation) {
@@ -239,21 +245,37 @@ export default function Explore() {
       async (position) => {
         const { latitude, longitude } = position.coords;
         setLocation({ latitude, longitude });
-        const locationName = await getLocationFromLongLat(latitude, longitude);
-        setLocationQuery(`${locationName?.city_district || locationName?.road || ''} ${locationName?.county || locationName?.state || ''}, ${locationName?.country}`);
-        setError(null);
       },
       (err) => {
         setError(err.message);
       },
       { enableHighAccuracy: true, timeout: 5000 }
-    )
+    );
   };
 
-  // TODO: Implement search logic
   const onSearch = () => {
     // TODO: Filter places based on locationQuery, rating, distance, etc.
   };
+
+  useEffect(() => {
+    if (!location) return;
+    if (location.latitude == null || location.longitude == null) return;
+
+    async function fetchLocation() {
+      const { latitude, longitude } = location;
+      const locationName = await getLocationFromLongLat(latitude, longitude);
+
+      setLocationQuery(
+        `${locationName?.city_district ||
+          locationName?.road ||
+          ""} ${locationName?.county ||
+          locationName?.state ||
+          ""}, ${locationName?.country}`
+      );
+    }
+
+    fetchLocation();
+  }, [location]);
 
   return (
     <main className="mt-10 bg-slate-50">
@@ -267,12 +289,20 @@ export default function Explore() {
           setDistance={setDistance}
           onUseMyLocation={onUseMyLocation}
           onSearch={onSearch}
+          onOpenMapPicker={() => setIsMapPickerOpen(true)}
         />
-        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[300px,1fr]">
-          <MapPlaceholder mapRef={mapRef} />
+
+        {error && (
+          <p className="mt-2 text-sm text-red-600">
+            {error}
+          </p>
+        )}
+
+        <div className="mt-6">
           <PlaceCardsGrid places={places} />
         </div>
       </div>
+
       <Link
         to="/Listing/New"
         className="fixed bottom-11 right-6 inline-flex items-center gap-2 rounded-full bg-rose-600 px-5 py-3 text-sm font-semibold text-white shadow-lg hover:bg-rose-700"
@@ -280,7 +310,44 @@ export default function Explore() {
       >
         <Plus className="h-4 w-4" /> Add Place
       </Link>
+
+      {/* Map picker modal */}
+      {isMapPickerOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="relative w-full max-w-4xl h-[70vh] rounded-xl bg-white shadow-xl overflow-hidden flex flex-col">
+            <header className="flex items-center justify-between px-4 py-3 border-b border-slate-200">
+              <h2 className="text-sm font-semibold text-slate-900">
+                Choose location on map
+              </h2>
+              <button
+                type="button"
+                className="text-sm text-slate-500 hover:text-slate-700"
+                onClick={() => setIsMapPickerOpen(false)}
+              >
+                Close
+              </button>
+            </header>
+
+            <div className="flex-1">
+              <MapView
+                mode="select"
+                initialLat={location?.latitude || 27.7172}
+                initialLng={location?.longitude || 85.324}
+                onLocationSelected={(lat, lng) => {
+                  setLocation({ latitude: lat, longitude: lng });
+                  setIsMapPickerOpen(false);
+                }}
+              />
+            </div>
+
+            <footer className="px-4 py-3 border-t border-slate-200 text-xs text-slate-500">
+              Tap on the map to select a location. We’ll fill the address above automatically.
+            </footer>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
+
 
