@@ -33,7 +33,7 @@ const Header = () => {
           <Link to="/" className="text-slate-600 hover:text-cyan-700">Home</Link>
           <Link to="/Explore" className="text-slate-600 hover:text-cyan-700">Explore</Link>
           <Link to="/Listing/New" className="text-slate-600 hover:text-cyan-700">Add Place</Link>
-          <Link to="#about" className="text-slate-600 hover:text-cyan-700">About</Link>
+          <Link to="/About" className="text-slate-600 hover:text-cyan-700">About</Link>
         </nav>
 
         {/* Right action (desktop) */}
@@ -66,7 +66,7 @@ const Header = () => {
             <Link onClick={() => setOpen(false)} to="/" className="py-2 text-slate-700 hover:text-cyan-700">Home</Link>
             <Link onClick={() => setOpen(false)} to="/Explore" className="py-2 text-slate-700 hover:text-cyan-700">Explore</Link>
             <Link onClick={() => setOpen(false)} to="/Listing/New" className="py-2 text-slate-700 hover:text-cyan-700">Add Place</Link>
-            <Link onClick={() => setOpen(false)} to="#about" className="py-2 text-slate-700 hover:text-cyan-700">About</Link>
+            <Link onClick={() => setOpen(false)} to="/About" className="py-2 text-slate-700 hover:text-cyan-700">About</Link>
             <Link
               onClick={() => setOpen(false)}
               to="/Login"

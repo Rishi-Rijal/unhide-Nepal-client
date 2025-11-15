@@ -1,4 +1,5 @@
 import Container from "../Container/Container";
+import {Link} from "react-router-dom"
 
 const Footer = () => (
   <footer className="border-t border-slate-200 bg-white py-10 text-sm">
@@ -7,10 +8,10 @@ const Footer = () => (
       <div>
         <p className="mb-2 font-semibold text-slate-800">Explore</p>
         <ul className="space-y-1 text-slate-600">
-          <li><a href="#about" className="hover:text-teal-600">About Us</a></li>
-          <li><a href="#contact" className="hover:text-teal-600">Contact</a></li>
-          <li><a href="#privacy" className="hover:text-teal-600">Privacy Policy</a></li>
-          <li><a href="#terms" className="hover:text-teal-600">Terms of Service</a></li>
+          <li><Link to="/About" className="hover:text-teal-600">About Us</Link></li>
+          <li><Link to="/Contact" className="hover:text-teal-600">Contact</Link></li>
+          <li><Link to="/PrivacyPolicy" className="hover:text-teal-600">Privacy Policy</Link></li>
+          <li><Link to="/TermsOfService" className="hover:text-teal-600">Terms of Service</Link></li>
         </ul>
       </div>
       <div>
