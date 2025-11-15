@@ -1,14 +1,10 @@
 import React from "react";
 import {
   CheckCircle2,
-  Image as ImageIcon,
-  MapPin,
-  FileCheck2,
-  Info,
   ChevronRight,
   ChevronLeft,
-  Sparkles,
 } from "lucide-react";
+import { Navigate, useNavigate } from "react-router-dom";
 import PhotoUploader from "./Components/AddListing/PhotoUploader";
 import Label from "./Components/Shared/Label";
 import Helper from "./Components/Shared/Helper";
@@ -18,6 +14,7 @@ import Stepper from "./Components/AddListing/Stepper";
 import GROUPS from "./utils/groups";
 import CategoryDropdown from "./Components/CategoryDropdown.jsx";
 import MapView from "./Map.jsx";
+import { createListing } from "./api/listing.api.js";
 
 const uniq = (arr) => Array.from(new Set(arr));
 const tagsFor = (categories) => uniq(categories.flatMap((c) => GROUPS[c] || []));
@@ -53,6 +50,7 @@ export default function NewListing() {
     });
     return out;
   }, [form.categories]);
+  const navigate = useNavigate()
 
   const handleCategoriesChange = (nextCategories) => {
     const validTags = tagsFor(nextCategories);
@@ -105,7 +103,7 @@ export default function NewListing() {
     setStep((s) => Math.max(s - 1, 0));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e?.preventDefault();
     // validate all steps before submit
     const allErrs = {
@@ -125,7 +123,15 @@ export default function NewListing() {
     }
     setErrors({});
     // TODO: replace with real API call that sends FormData including photos
-    alert("Listing submitted!\n" + JSON.stringify({ ...form, photos: form.photos.map((f) => f.name) }, null, 2));
+    try {
+      const listingData = await createListing(form)
+      navigate("/Explore")
+    } catch (error) {
+      throw error
+    }
+    
+    // alert("Listing submitted!\n" + JSON.stringify({ ...form, photos: form.photos.map((f) => f.name) }, null, 2));
+
   }
   const parseNumberOrNull = (value) => {
     const n = Number(value);
