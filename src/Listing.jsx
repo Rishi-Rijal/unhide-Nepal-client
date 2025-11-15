@@ -92,7 +92,7 @@ export default function Listing() {
   }
 
   return (
-    <main className="pt-14 bg-white">
+    <main className="pt-16 bg-white">
       <HeroSection
         title={listing.title}
         hero={listing.hero}
