@@ -8,92 +8,9 @@ import CategoryDropdown from "./Components/CategoryDropdown.jsx";
 import GROUPS from "./utils/groups.js";
 import axios from "axios";
 import MapView from "./Map.jsx";
+import { getListings, getFilteredListings } from "./api/listing.api.js";
 
 const REVERSE_GEOMAPING_KEY = import.meta.env.VITE_REVERSE_GEOMAPING_KEY
-
-
-const PLACES = [
-  {
-    title: "Phoksundo Lake",
-    district: "Dolpa",
-    rating: 5,
-    tags: ["High-Altitude", "Lake", "Trekking"],
-    image:
-      "https://images.unsplash.com/photo-1558981806-ec527fa84c39?q=80&w=2070&auto=format&fit=crop",
-    description:
-      "Nepal's deepest lake, known for its mesmerizing turquoise color and dramatic cliffs.",
-  },
-  {
-    title: "Annapurna Base Camp",
-    district: "Kaski",
-    rating: 5,
-    tags: ["Trekking", "Mountain", "Viewpoint"],
-    image:
-      "https://images.unsplash.com/photo-1549880181-56a44cf4a9a7?q=80&w=2070&auto=format&fit=crop",
-    description:
-      "A world-renowned trekking destination offering breathtaking Himalayan vistas.",
-  },
-  {
-    title: "Chitwan National Park",
-    district: "Chitwan",
-    rating: 4,
-    tags: ["Wildlife", "Jungle Safari", "Nature"],
-    image:
-      "https://images.unsplash.com/photo-1568733873715-f9d49737b311?q=80&w=1932&auto=format&fit=crop",
-    description:
-      "Home to rhinos, tigers, and diverse flora and fauna, offering exciting jungle safaris.",
-  },
-  {
-    title: "Begnas Lake",
-    district: "Kaski",
-    rating: 4,
-    tags: ["Lake", "Boating", "Relaxation"],
-    image:
-      "https://images.unsplash.com/photo-1602459040017-9d2f0ba6727b?q=80&w=2069&auto=format&fit=crop",
-    description:
-      "A peaceful freshwater lake near Pokhara, ideal for boating, fishing, and picnics.",
-  },
-  {
-    title: "Bandipur Homestay",
-    district: "Tanahun",
-    rating: 5,
-    tags: ["Homestay", "Cultural", "Scenic"],
-    image:
-      "https://images.unsplash.com/photo-1581079215507-3f7a3b8f3c1c?q=80&w=2070&auto=format&fit=crop",
-    description:
-      "Experience authentic Newari culture and stunning Himalayan views from a hilltop town.",
-  },
-  {
-    title: "Poon Hill",
-    district: "Myagdi",
-    rating: 5,
-    tags: ["Trekking", "Sunrise", "Viewpoint"],
-    image:
-      "https://images.unsplash.com/photo-1519680772-8bba63c6f61e?q=80&w=2069&auto=format&fit=crop",
-    description:
-      "Famous for its spectacular sunrise views over the Annapurna and Dhaulagiri ranges.",
-  },
-  {
-    title: "Langtang Valley",
-    district: "Rasuwa",
-    rating: 4,
-    tags: ["Trekking", "Himalayan", "Culture"],
-    image:
-      "https://images.unsplash.com/photo-1519681394-2fbb3bfb60b0?q=80&w=2069&auto=format&fit=crop",
-    description:
-      "A beautiful valley offering stunning Himalayan landscapes and rich Tamang culture.",
-  },
-  {
-    title: "Gosaikunda Lake",
-    district: "Rasuwa",
-    rating: 5,
-    tags: ["Pilgrimage", "Lake", "High-Altitude"],
-    image:
-      "https://images.unsplash.com/photo-1666719167403-8ddcf2dcecac?q=80&w=2070&auto=format&fit=crop",
-    description:
-      "A sacred Hindu site; this pristine alpine lake is a popular pilgrimage and trek.",
-  },
-];
 
 // FilterControls component
 function FilterControls({
@@ -105,7 +22,7 @@ function FilterControls({
   setDistance,
   onUseMyLocation,
   onSearch,
-  onOpenMapPicker,   
+  onOpenMapPicker,
 }) {
   return (
     <div className="relative z-2 rounded-xl border border-slate-200 bg-white/60 backdrop-blur supports-[backdrop-filter]:bg-white/40 p-3 md:p-4">
@@ -205,15 +122,25 @@ function FilterControls({
   );
 }
 
-
-
 // PlaceCardsGrid component
 function PlaceCardsGrid({ places }) {
+  const normalized = Array.isArray(places)
+    ? places.map((p, i) => ({
+        id: p._id || i,
+        image: p.images?.[0]?.url || "https://images.unsplash.com/photo-1529733905113-027ed85d7e33?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bmVwYWx8ZW58MHx8MHx8fDA%3D",          // first image URL
+        title: p.name || "",                      
+        district: "",                             // not in API yet empty for now
+        rating: typeof p.averageRating === "number" ? p.averageRating : 0,
+        tags: Array.isArray(p.tags) ? p.tags : [],
+        description: p.description || "",
+      }))
+    : [];
+
   return (
     <div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {places.map((p) => (
-          <PlaceCard key={p.title} {...p} />
+        {normalized.map((place) => (
+          <PlaceCard key={place.id} {...place} />
         ))}
       </div>
     </div>
@@ -233,8 +160,8 @@ export default function Explore() {
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
   const [isMapPickerOpen, setIsMapPickerOpen] = useState(false);
+  const [places, setPlaces] = useState([])
 
-  const places = useMemo(() => PLACES, []);
 
   const onUseMyLocation = async () => {
     if (!navigator.geolocation) {
@@ -253,8 +180,16 @@ export default function Explore() {
     );
   };
 
-  const onSearch = () => {
+  const onSearch = async () => {
     // TODO: Filter places based on locationQuery, rating, distance, etc.
+    try {
+      const listings = await getListings();
+      // const filteredListings = await getFilteredListings();
+      setPlaces(listings)
+    } catch (error) {
+      console.error("Error during search:", error);
+      setError("Failed to fetch listings. Please try again later.");
+    }
   };
 
   useEffect(() => {
@@ -267,15 +202,20 @@ export default function Explore() {
 
       setLocationQuery(
         `${locationName?.city_district ||
-          locationName?.road ||
-          ""} ${locationName?.county ||
-          locationName?.state ||
-          ""}, ${locationName?.country}`
+        locationName?.road ||
+        ""} ${locationName?.county ||
+        locationName?.state ||
+        ""}, ${locationName?.country}`
       );
     }
 
     fetchLocation();
+    onSearch();
   }, [location]);
+
+  useEffect(()=>{
+    onSearch()
+  }, [])
 
   return (
     <main className="mt-10 bg-slate-50">
