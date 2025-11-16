@@ -24,7 +24,7 @@ export default function FavoriteButton({ item, size = 20 }) {
       className={`inline-flex items-center justify-center p-1 rounded-full bg-white/80 backdrop-blur-sm shadow-sm ring-1 ring-slate-200 hover:scale-105 transition-transform`}
       style={{ width: size + 8, height: size + 8 }}
     >
-      <Heart strokeWidth={1.5} fill={fav ? "#ef4444" : "none"} color={fav ? "#ef4444" : "#111827"} style={{ width: size, height: size }} />
+      <Heart strokeWidth={1.5} fill={fav ? "#f97316" : "none"} color={fav ? "#f97316" : "#0f172a"} style={{ width: size, height: size }} />
     </button>
   );
 }
