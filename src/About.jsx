@@ -53,7 +53,7 @@ const About = () => {
         </div>
 
         {/* Mission Section */}
-        <div className="mb-16 bg-gradient-to-r from-blue-400 to-indigo-600 text-white p-8 md:p-12 rounded-lg">
+        <div className="mb-16 bg-gray-50 text-gray-900 p-8 md:p-12 rounded-lg">
           <h2 className="text-3xl font-bold mb-4">Our Mission</h2>
           <p className="text-lg leading-relaxed">
             The mission of Unhide Nepal is to make discovering new places in Nepal feel
