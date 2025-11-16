@@ -32,21 +32,41 @@ const getFilteredListings = async ({
 } = {}) => {
   try {
     const params = new URLSearchParams();
+
     categories.forEach((c) => params.append("categories", c));
     tags.forEach((t) => params.append("tags", t));
-    if (minRating !== undefined && minRating !== "any" ) params.append("minRating", Number(minRating));
+
+    // Basic filters
+    if (minRating !== undefined && minRating !== "any")
+      params.append("minRating", Number(minRating));
+
     if (difficulty) params.append("difficulty", difficulty);
-    if (verifiedOnly !== undefined) params.append("verifiedOnly", String(verifiedOnly));
+    if (verifiedOnly !== undefined)
+      params.append("verifiedOnly", String(verifiedOnly));
+
+    // Sorting / limit
     if (sort) params.append("sort", sort);
-    if (limit !== undefined) params.append("limit", String(limit));
+    if (limit) params.append("limit", Number(limit));
+
+    // Cursor
     if (cursor) params.append("cursor", cursor);
-    if (distanceKm && Number(lat)) params.append("lat", Number(lat));
-    if (distanceKm && Number(lng)) params.append("lng", Number(lng));
-    if (Number(lat) && Number(lng)) params.append("distanceKm", distanceKm);
+
+    // Geo
+    const hasLatLng = Number(lat) && Number(lng);
+
+    if (hasLatLng) {
+      params.append("lat", Number(lat));
+      params.append("lng", Number(lng));
+    }
+
+    if (hasLatLng && distanceKm) {
+      params.append("distanceKm", Number(distanceKm));
+    }
 
     const url = `/${LISTINGS_API_BASE}/filter?${params.toString()}`;
     const response = await api.get(url);
-    return response.data.data;
+
+    return response.data;
   } catch (error) {
     console.error("Error fetching data:", error);
     throw error;
