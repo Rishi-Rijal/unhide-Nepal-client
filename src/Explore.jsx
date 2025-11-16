@@ -203,8 +203,10 @@ export default function Explore() {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const lastChangeRef = useRef(null); // "coords" | "text" | null
-  const [locationQueryTyping, setLocationQueryTyping] = useState("");  // in-progress typing value
-
+  const [cursor, setCursor] = useState(null);
+  const [hasNextPage, setHasNextPage] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
 
 
@@ -225,26 +227,56 @@ export default function Explore() {
     );
   };
 
-  const onSearch = async () => {
-    // TODO: Filter places based on locationQuery, rating, distance, etc.
-    try {
-      // const listings = await getListings();
-      const filterOptions = {
-        tags: selectedCategories,
-        minRating: rating,
-        lat: location?.latitude,
-        lng: location?.longitude,
-        distanceKm: distance
-      }
+  const buildFilterOptions = (extra = {}) => ({
+    tags: selectedCategories,
+    minRating: rating,
+    lat: location?.latitude,
+    lng: location?.longitude,
+    distanceKm: distance,
+    limit: 12,
+    ...extra, // cursor etc
+  });
 
-      console.log(filterOptions)
+  const onSearch = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const filterOptions = buildFilterOptions();
       const filteredListings = await getFilteredListings(filterOptions);
-      setPlaces(filteredListings)
+
+      setPlaces(filteredListings.data);
+      setCursor(filteredListings.nextCursor);
+      setHasNextPage(filteredListings.hasNextPage);
     } catch (error) {
       console.error("Error during search:", error);
       setError("Failed to fetch listings. Please try again later.");
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  const handleLoadMore = async () => {
+    if (!hasNextPage || !cursor) return;
+
+    try {
+      setIsLoadingMore(true);
+      setError(null);
+
+      const filterOptions = buildFilterOptions({ cursor });
+      const filteredListings = await getFilteredListings(filterOptions);
+
+      // append results
+      setPlaces(prev => [...prev, ...filteredListings.data]);
+      setCursor(filteredListings.nextCursor);
+      setHasNextPage(filteredListings.hasNextPage);
+    } catch (error) {
+      console.error("Error loading more listings:", error);
+      setError("Failed to load more listings. Please try again.");
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
+
 
   useEffect(() => {
     if (!location) return;
@@ -326,6 +358,19 @@ export default function Explore() {
         <div className="mt-6">
           <PlaceCardsGrid places={places} />
         </div>
+        {hasNextPage && (
+          <div className="mt-6 flex justify-center">
+            <button
+              type="button"
+              onClick={handleLoadMore}
+              disabled={isLoadingMore}
+              className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {isLoadingMore ? "Loading..." : "Load more"}
+            </button>
+          </div>
+        )}
+
       </div>
 
       <Link
