@@ -91,8 +91,6 @@ const Contact = () => {
 
       const payload = { name: form.name.trim(), email: form.email.trim(), message: form.message.trim(), recaptchaToken };
 
-      // Replace this simulated send with a real API call to your server
-      // Example:
       // const res = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
       // if (!res.ok) throw new Error('Network error');
 
@@ -114,7 +112,7 @@ const Contact = () => {
         <div className="mb-16 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">Contact Us</h1>
           <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Have a suggestion or want to share a hidden gem? Send me a message — I'd love to hear from you.
+            Have a suggestion or want to share a hidden gem? Send me a message - I'd love to hear from you.
           </p>
         </div>
 
@@ -127,7 +125,7 @@ const Contact = () => {
             </p>
 
             <p className="text-sm text-gray-600 mb-2">
-              Prefer email? <a href="mailto:rishi@example.com" className="text-cyan-600 underline">rishi@example.com</a>
+              Prefer email? <a href="mailto:rishirijal2025@gmail.com" className="text-cyan-600 underline">rishirijal2025@gmail.com</a>
             </p>
 
             <p className="text-sm text-gray-600">Or check the project on <a href="https://github.com/Rishi-Rijal" target="_blank" rel="noreferrer" className="text-cyan-600 underline">GitHub</a>.</p>
@@ -209,13 +207,13 @@ const Contact = () => {
 
               {status === 'success' && (
                 <div className="p-3 mt-2 bg-green-50 border border-green-200 text-green-800 rounded">
-                  Thanks — your message has been sent. I’ll get back to you soon.
+                  Thanks - your message has been sent..
                 </div>
               )}
 
               {status === 'error' && (
                 <div className="p-3 mt-2 bg-red-50 border border-red-200 text-red-800 rounded">
-                  Oops — something went wrong. Please try again or email me directly.
+                  Oops - something went wrong. Please try again or email me directly.
                 </div>
               )}
             </form>
