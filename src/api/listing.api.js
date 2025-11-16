@@ -24,12 +24,14 @@ const getFilteredListings = async ({
   difficulty,
   verifiedOnly,
   sort,
+  lat,
+  lng,
+  distanceKm,
   limit,
   cursor,
 } = {}) => {
   try {
     const params = new URLSearchParams();
-
     categories.forEach((c) => params.append("categories", c));
     tags.forEach((t) => params.append("tags", t));
     if (minRating !== undefined && minRating !== "any" ) params.append("minRating", Number(minRating));
@@ -38,9 +40,11 @@ const getFilteredListings = async ({
     if (sort) params.append("sort", sort);
     if (limit !== undefined) params.append("limit", String(limit));
     if (cursor) params.append("cursor", cursor);
+    if (distanceKm && Number(lat)) params.append("lat", Number(lat));
+    if (distanceKm && Number(lng)) params.append("lng", Number(lng));
+    if (Number(lat) && Number(lng)) params.append("distanceKm", distanceKm);
 
     const url = `/${LISTINGS_API_BASE}/filter?${params.toString()}`;
-
     const response = await api.get(url);
     return response.data.data;
   } catch (error) {

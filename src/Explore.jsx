@@ -229,7 +229,15 @@ export default function Explore() {
     // TODO: Filter places based on locationQuery, rating, distance, etc.
     try {
       // const listings = await getListings();
-      const filterOptions = { tags: selectedCategories, minRating: rating }
+      const filterOptions = {
+        tags: selectedCategories,
+        minRating: rating,
+        lat: location?.latitude,
+        lng: location?.longitude,
+        distanceKm: distance
+      }
+
+      console.log(filterOptions)
       const filteredListings = await getFilteredListings(filterOptions);
       setPlaces(filteredListings)
     } catch (error) {
@@ -266,8 +274,14 @@ export default function Explore() {
     onSearch()
   }, [])
 
-  useEffect( () => {
-    if (!locationQuery) return;
+  useEffect(() => {
+    const trimmed = (locationQuery ?? "").trim();
+
+    if (!trimmed) {
+      setLocation(null);
+      lastChangeRef.current = null;
+      return;
+    }
 
     if (lastChangeRef.current === "coords") {
       lastChangeRef.current = null;
@@ -276,7 +290,7 @@ export default function Explore() {
     lastChangeRef.current = "text";
 
     async function fetchCoords() {
-      const coords = await getLatLngFromLocationName(locationQuery); //geocoding fn
+      const coords = await getLatLngFromLocationName(trimmed); // geocoding fn
       if (!coords) return;
       setLocation({
         latitude: coords[1],
@@ -285,7 +299,6 @@ export default function Explore() {
     }
     fetchCoords();
   }, [locationQuery]);
-
 
   return (
     <main className="mt-10 bg-slate-50">
