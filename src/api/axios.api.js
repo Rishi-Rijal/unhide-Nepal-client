@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseURL = "http://localhost:8000/";
+const baseURL = "https://unhide-nepal-server-gdfeb5g8dehrfedg.germanywestcentral-01.azurewebsites.net/";
 
 const api = axios.create({
   baseURL: baseURL
