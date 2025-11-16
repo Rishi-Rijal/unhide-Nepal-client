@@ -9,11 +9,13 @@ const ReviewsSection = ({ reviews, onAddReview }) => (
         <ReviewForm onSubmit={onAddReview} />
       </div>
     )}
+    {reviews.length>0 && 
     <div className="mt-2 divide-y divide-slate-200 rounded-2xl bg-white p-4 ring-1 ring-slate-200">
       {reviews.map((r, idx) => (
         <ReviewItem key={idx} {...r} />
       ))}
     </div>
+    }
   </section>
 );
 
