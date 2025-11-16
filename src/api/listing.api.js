@@ -18,36 +18,37 @@ const getListings = async () => {
 }
 
 const getFilteredListings = async ({
-    categories = [],
-    tags = [],
-    minRating,
-    difficulty,
-    verifiedOnly,
-    sort,
-    limit,
-    cursor
+  categories = [],
+  tags = [],
+  minRating,
+  difficulty,
+  verifiedOnly,
+  sort,
+  limit,
+  cursor,
 } = {}) => {
-    try {
-        const response = await api.get(`/${LISTINGS_API_BASE}/filter`, {
-            params: {
-                categories,
-                tags,
-                minRating,
-                difficulty,
-                verifiedOnly,
-                sort,
-                limit,
-                cursor
-            }
-        });
+  try {
+    const params = new URLSearchParams();
 
-        return response.data;
+    categories.forEach((c) => params.append("categories", c));
+    tags.forEach((t) => params.append("tags", t));
+    if (minRating !== undefined && minRating !== "any" ) params.append("minRating", Number(minRating));
+    if (difficulty) params.append("difficulty", difficulty);
+    if (verifiedOnly !== undefined) params.append("verifiedOnly", String(verifiedOnly));
+    if (sort) params.append("sort", sort);
+    if (limit !== undefined) params.append("limit", String(limit));
+    if (cursor) params.append("cursor", cursor);
 
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        throw error;
-    }
+    const url = `/${LISTINGS_API_BASE}/filter?${params.toString()}`;
+
+    const response = await api.get(url);
+    return response.data.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    throw error;
+  }
 };
+
 
 const createListing = async ({
     name,
@@ -90,7 +91,7 @@ const createListing = async ({
     }
 };
 
-const getListing = async(id)=>{
+const getListing = async (id) => {
     try {
         const response = await api.get(`${LISTINGS_API_BASE}/${id}`);
         return response;
