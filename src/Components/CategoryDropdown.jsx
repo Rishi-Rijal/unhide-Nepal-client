@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
-const CategoryDropdown = forwardRef(
+const CategoryDropdown =
   (
     {
       groups,
@@ -232,7 +232,7 @@ const CategoryDropdown = forwardRef(
         role="option"
         aria-selected={selected}
       >
-        <input type="checkbox" checked={selected} readOnly className="mr-2" tabIndex={-1} />
+        <input type="checkbox" checked={selected} readOnly className="mr-2" tabIndex={-1} name={`option-${value}`} />
         {value}
       </div>
     );
@@ -301,6 +301,7 @@ const CategoryDropdown = forwardRef(
               placeholder={searchPlaceholder}
               className="w-full px-3 py-2 border-b text-sm outline-none"
               value={rawSearch}
+              name={`option-${value}`}
               onChange={(e) => setRawSearch(e.target.value)}
               onKeyDown={backspaceChipDelete}
               aria-autocomplete="list"
@@ -377,9 +378,8 @@ const CategoryDropdown = forwardRef(
         `}</style>
       </div>
     );
-  }
-);
+  };
 
-CategoryDropdown.displayName = "CategoryDropdown";
+// CategoryDropdown.displayName = "CategoryDropdown";
 
 export default CategoryDropdown;
