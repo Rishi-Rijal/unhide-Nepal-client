@@ -20,23 +20,44 @@ function FilterControls({
   setRating,
   distance,
   setDistance,
+  selectedCategories,
+  setSelectedCategories,
+  selectedTags,
+  setSelectedTags,
   onUseMyLocation,
   onSearch,
   onOpenMapPicker,
 }) {
+
+  const [locationDraft, setLocationDraft] = useState(locationQuery ?? "");
+
+  useEffect(() => {
+    setLocationDraft(locationQuery ?? "");
+  }, [locationQuery]);
+
+  const commitLocation = () => {
+    const next = (locationDraft ?? "").trim();
+    const current = (locationQuery ?? "").trim();
+    if (next !== current) {
+      setLocationQuery(next);
+    }
+  };
+
+
   return (
     <div className="relative z-2 rounded-xl border border-slate-200 bg-white/60 backdrop-blur supports-[backdrop-filter]:bg-white/40 p-3 md:p-4">
       <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto] md:items-center gap-3">
         {/* Location input */}
-        <div className="relative">
+        <div onBlur={commitLocation} className="relative">
           <SearchBox
-            value={locationQuery}
-            onChange={setLocationQuery}
+            value={locationDraft}
+            onChange={setLocationDraft}
             placeholder="Search location (city, address, landmark)"
             containerClassName="w-full mw-full h-12 max-w-[480px]"
           />
 
-          {/* ⬇️ buttons directly under the search box */}
+
+          {/*  buttons directly under the search box */}
           <div className="mt-2 flex flex-wrap gap-2 text-xs">
             <button
               type="button"
@@ -65,7 +86,8 @@ function FilterControls({
             placeholder="Select categories"
             searchPlaceholder="Search categories…"
             widthClassName="w-72"
-            showBulkActions
+            value={selectedCategories}
+            onChange={setSelectedCategories}
           />
         </div>
 
@@ -81,8 +103,8 @@ function FilterControls({
             className="rounded-lg border border-slate-200 bg-white py-2.5 px-3 text-xs shadow-sm focus:outline-none hover:bg-slate-50"
           >
             <option value="any">Any rating</option>
-            <option value="4+">4★ and up</option>
-            <option value="3+">3★ and up</option>
+            <option value="4">4★ and up</option>
+            <option value="3">3★ and up</option>
             <option value="5">5★ only</option>
           </select>
         </div>
@@ -126,14 +148,14 @@ function FilterControls({
 function PlaceCardsGrid({ places }) {
   const normalized = Array.isArray(places)
     ? places.map((p, i) => ({
-        id: p._id || i,
-        image: p.images?.[0]?.url || "https://images.unsplash.com/photo-1529733905113-027ed85d7e33?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bmVwYWx8ZW58MHx8MHx8fDA%3D",          // first image URL
-        title: p.name || "",                      
-        district: "",                             // not in API yet empty for now
-        rating: typeof p.averageRating === "number" ? p.averageRating : 0,
-        tags: Array.isArray(p.tags) ? p.tags : [],
-        description: p.description || "",
-      }))
+      id: p._id || i,
+      image: p.images?.[0]?.url || "https://images.unsplash.com/photo-1529733905113-027ed85d7e33?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bmVwYWx8ZW58MHx8MHx8fDA%3D",          // first image URL
+      title: p.name || "",
+      district: "",                             // not in API yet empty for now
+      rating: typeof p.averageRating === "number" ? p.averageRating : 0,
+      tags: Array.isArray(p.tags) ? p.tags : [],
+      description: p.description || "",
+    }))
     : [];
 
   return (
@@ -152,6 +174,23 @@ const getLocationFromLongLat = async (lat, lng) => {
   return location.data.address;
 }
 
+
+const getLatLngFromLocationName = async (locationText) => {
+  const apiKey = "82adf37af56e432ea04596b30e80b0f0";
+
+  const response = await axios.get(
+    "https://api.geoapify.com/v1/geocode/search",
+    {
+      params: {
+        text: locationText,
+        apiKey: apiKey,
+      },
+    }
+  );
+  return response.data.features[0].geometry.coordinates;
+};
+
+
 // Main Explore component
 export default function Explore() {
   const [distance, setDistance] = useState(50);
@@ -161,6 +200,12 @@ export default function Explore() {
   const [error, setError] = useState(null);
   const [isMapPickerOpen, setIsMapPickerOpen] = useState(false);
   const [places, setPlaces] = useState([])
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const lastChangeRef = useRef(null); // "coords" | "text" | null
+  const [locationQueryTyping, setLocationQueryTyping] = useState("");  // in-progress typing value
+
+
 
 
   const onUseMyLocation = async () => {
@@ -183,9 +228,10 @@ export default function Explore() {
   const onSearch = async () => {
     // TODO: Filter places based on locationQuery, rating, distance, etc.
     try {
-      const listings = await getListings();
-      // const filteredListings = await getFilteredListings();
-      setPlaces(listings)
+      // const listings = await getListings();
+      const filterOptions = { tags: selectedCategories, minRating: rating }
+      const filteredListings = await getFilteredListings(filterOptions);
+      setPlaces(filteredListings)
     } catch (error) {
       console.error("Error during search:", error);
       setError("Failed to fetch listings. Please try again later.");
@@ -200,6 +246,10 @@ export default function Explore() {
       const { latitude, longitude } = location;
       const locationName = await getLocationFromLongLat(latitude, longitude);
 
+      if (lastChangeRef.current === "text") {
+        lastChangeRef.current = null;
+        return;
+      }
       setLocationQuery(
         `${locationName?.city_district ||
         locationName?.road ||
@@ -210,12 +260,32 @@ export default function Explore() {
     }
 
     fetchLocation();
-    onSearch();
   }, [location]);
 
-  useEffect(()=>{
+  useEffect(() => {
     onSearch()
   }, [])
+
+  useEffect( () => {
+    if (!locationQuery) return;
+
+    if (lastChangeRef.current === "coords") {
+      lastChangeRef.current = null;
+      return;
+    }
+    lastChangeRef.current = "text";
+
+    async function fetchCoords() {
+      const coords = await getLatLngFromLocationName(locationQuery); //geocoding fn
+      if (!coords) return;
+      setLocation({
+        latitude: coords[1],
+        longitude: coords[0],
+      });
+    }
+    fetchCoords();
+  }, [locationQuery]);
+
 
   return (
     <main className="mt-10 bg-slate-50">
@@ -230,6 +300,8 @@ export default function Explore() {
           onUseMyLocation={onUseMyLocation}
           onSearch={onSearch}
           onOpenMapPicker={() => setIsMapPickerOpen(true)}
+          selectedCategories={selectedCategories}
+          setSelectedCategories={setSelectedCategories}
         />
 
         {error && (
@@ -271,8 +343,8 @@ export default function Explore() {
             <div className="flex-1">
               <MapView
                 mode="select"
-                initialLat={location?.latitude || 27.7172}
-                initialLng={location?.longitude || 85.324}
+                lat={location?.latitude || 27.7172}
+                lng={location?.longitude || 85.324}
                 onLocationSelected={(lat, lng) => {
                   setLocation({ latitude: lat, longitude: lng });
                   setIsMapPickerOpen(false);
