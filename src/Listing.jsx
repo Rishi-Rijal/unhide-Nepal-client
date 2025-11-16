@@ -7,7 +7,7 @@ import TipsSection from "./Components/Listing/TipsSection";
 import GallerySection from "./Components/Listing/GallerySection";
 import ReviewsSection from "./Components/Listing/ReviewsSection";
 import RelatedSection from "./Components/Listing/RelatedSection";
-import { getListing } from "./api/listing.api"; 
+import { getListing } from "./api/listing.api";
 
 export default function Listing() {
   const { id } = useParams(); // /Listing/:id
@@ -23,7 +23,6 @@ export default function Listing() {
 
         const response = await getListing(id);
         const data = response.data
-        console.log(response.data)
         const heroImage = data.images?.[0]?.url || "";
         const galleryImages = (data.images || []).map((img) => img.url);
 
@@ -37,13 +36,21 @@ export default function Listing() {
           tags: data.tags || [],
           locationImage: galleryImages[1] || heroImage,
           tips: [
-            data.extraAdvice
-              ? { title: "Extra Advice", body: data.extraAdvice }
+            data.extraAdvice?.trim()
+              ? { title: "Extra Advice", body: data.extraAdvice.trim() }
               : null,
-          ].filter(Boolean),
+
+            data.permitsRequired !== undefined && data.permitsRequired !== null
+              ? {
+                title: "Permits Required",
+                body: data.permitsRequired ? "Permits required" : "No permits required",
+              }
+              : null,
+          ].filter(Boolean)
+          ,
           gallery: galleryImages,
-          reviews: data.reviews || [], 
-          related: [], 
+          reviews: data.reviews || [],
+          related: [],
           latitude: data.location?.coordinates?.[1],
           longitude: data.location?.coordinates?.[0],
         };
@@ -90,7 +97,6 @@ export default function Listing() {
       </main>
     );
   }
-
   return (
     <main className="pt-16 bg-white">
       <HeroSection
@@ -99,18 +105,25 @@ export default function Listing() {
         rating={listing.rating}
         reviewsCount={listing.reviewsCount}
       />
+
       <OverviewSection overview={listing.overview} tags={listing.tags} />
+
+      <GallerySection gallery={listing.gallery} />
+
+      <TipsSection tips={listing.tips} />
+
       <LocationSection
-        locationImage={listing.locationImage}
         title={listing.title}
         latitude={listing.latitude}
         longitude={listing.longitude}
       />
-      <TipsSection tips={listing.tips} />
-      <GallerySection gallery={listing.gallery} />
-      <ReviewsSection reviews={listing.reviews} onAddReview={addReview} />
+
+        <ReviewsSection reviews={listing.reviews} onAddReview={addReview} />
+
       <RelatedSection related={listing.related} />
+
       <div className="h-12" />
     </main>
+
   );
 }
