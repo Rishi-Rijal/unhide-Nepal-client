@@ -23,7 +23,7 @@ function toValidLng(value, fallback = DEFAULT_LNG) {
 }
 
 export default function MapView({
-  mode = "select",
+  mode = "select",            // "select" | "view"
   lat = DEFAULT_LAT,
   lng = DEFAULT_LNG,
   onLocationSelected = () => {},
@@ -39,8 +39,17 @@ export default function MapView({
 
   const [theme, setTheme] = useState("terrain");
 
+  const initialPositionRef = useRef({
+    lat: toValidLat(lat),
+    lng: toValidLng(lng),
+  });
+
+  const modeRef = useRef(mode);
+  useEffect(() => {
+    modeRef.current = mode;
+  }, [mode]);
+
   const MAP_STYLES = {
-    //streets: "https://tiles.openfreemap.org/styles/liberty",
     satellite: "https://tiles.stadiamaps.com/styles/alidade_satellite.json",
     terrain: "https://tiles.stadiamaps.com/styles/outdoors.json",
   };
@@ -51,6 +60,8 @@ export default function MapView({
 
     const startLat = toValidLat(lat);
     const startLng = toValidLng(lng);
+
+    initialPositionRef.current = { lat: startLat, lng: startLng };
 
     map.current = new maplibregl.Map({
       container: mapContainer.current,
@@ -68,9 +79,8 @@ export default function MapView({
       .setLngLat([startLng, startLat])
       .addTo(map.current);
 
-    // Click to pick location
-    map.current.on("click", (e) => {
-      if (mode !== "select") return;
+    const handleClick = (e) => {
+      if (modeRef.current !== "select") return; 
 
       const { lng: clickLng, lat: clickLat } = e.lngLat || {};
       if (!Number.isFinite(clickLat) || !Number.isFinite(clickLng)) return;
@@ -87,7 +97,9 @@ export default function MapView({
       } catch (err) {
         console.error("onLocationSelected callback failed", err);
       }
-    });
+    };
+
+    map.current.on("click", handleClick);
   }, []); // init once
 
   useEffect(() => {
@@ -120,6 +132,21 @@ export default function MapView({
     });
   };
 
+  const goToInitialPosition = () => {
+    if (!map.current || !marker.current) return;
+
+    const { lat: initLat, lng: initLng } = initialPositionRef.current;
+
+    map.current.flyTo({
+      center: [initLng, initLat],
+      zoom: 12,
+      speed: 1.2,
+    });
+
+    marker.current.setLngLat([initLng, initLat]);
+    setCoords({ lat: initLat, lng: initLng });
+  };
+
   return (
     <div className="relative h-[40vh] min-h-[320px] max-h-[520px] w-full rounded-lg overflow-hidden">
       {/* MAP */}
@@ -146,6 +173,16 @@ export default function MapView({
             {t}
           </button>
         ))}
+      </div>
+
+      {/* 🔹 RESET BUTTON */}
+      <div className="absolute top-3 right-3 z-10">
+        <button
+          onClick={goToInitialPosition}
+          className="px-3 py-1 text-sm rounded-md bg-white border shadow-md text-slate-700 hover:bg-slate-100"
+        >
+          Initial position
+        </button>
       </div>
 
       {/* COORDINATES */}
