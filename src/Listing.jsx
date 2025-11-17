@@ -8,6 +8,8 @@ import GallerySection from "./Components/Listing/GallerySection";
 import ReviewsSection from "./Components/Listing/ReviewsSection";
 import RelatedSection from "./Components/Listing/RelatedSection";
 import { getListing } from "./api/listing.api";
+import { addUserReview } from "./api/review.api.js";
+import { getRatingsByListingID } from "./api/review.api.js"
 
 export default function Listing() {
   const { id } = useParams(); // /Listing/:id
@@ -25,13 +27,14 @@ export default function Listing() {
         const data = response.data
         const heroImage = data.images?.[0]?.url || "";
         const galleryImages = (data.images || []).map((img) => img.url);
-
         const uiListing = {
           id: data._id || id,
           title: data.name,
           hero: heroImage,
-          rating: data.rating || 0,
-          reviewsCount: data.reviewsCount || 0,
+          rating: data.averageRating || 0,
+          reviewsCount: data.ratingsCount || 0,
+          likesCount: data.likesCount || 0,
+          likedByUser: data.likedByUser ?? data.liked ?? false,
           overview: data.description,
           tags: data.tags || [],
           locationImage: galleryImages[1] || heroImage,
@@ -46,6 +49,12 @@ export default function Listing() {
                 body: data.permitsRequired ? "Permits required" : "No permits required",
               }
               : null,
+            data.bestSeason?.trim()
+              ? { title: "Best Season", body: data.bestSeason.trim() }
+              : null,
+            data.difficulty?.trim()
+              ? { title: "Difficulty", body: data.difficulty.trim() }
+              : null,
           ].filter(Boolean)
           ,
           gallery: galleryImages,
@@ -55,6 +64,9 @@ export default function Listing() {
           longitude: data.location?.coordinates?.[0],
         };
 
+        const reviewResponse = await getRatingsByListingID(id);
+        uiListing.allReviews = reviewResponse.data;
+
         setListing(uiListing);
       } catch (err) {
         console.error(err);
@@ -63,24 +75,32 @@ export default function Listing() {
         setLoading(false);
       }
     }
-
     if (id) fetchListing();
   }, [id]);
 
-  function addReview(r) {
+  async function addReview(r) {
+    const result = await addUserReview({ ...r, postId: listing.id });
+
+    const newReview = result.data;
+
     setListing((prev) => {
       if (!prev) return prev;
-      const reviews = [...(prev.reviews || []), r];
+
+      const allReviews = [...(prev.allReviews || []), newReview];
+
       const rating =
-        reviews.reduce((s, x) => s + (x.rating || 0), 0) / reviews.length;
+        allReviews.reduce((s, x) => s + (x.rating || 0), 0) / allReviews.length;
+
       return {
         ...prev,
-        reviews,
+        allReviews,
         rating: Math.round(rating * 10) / 10,
         reviewsCount: (prev.reviewsCount || 0) + 1,
       };
     });
   }
+
+
 
   if (loading) {
     return (
@@ -101,9 +121,11 @@ export default function Listing() {
     <main className="pt-16 bg-white">
       <HeroSection
         title={listing.title}
+        id={listing.id}
         hero={listing.hero}
         rating={listing.rating}
         reviewsCount={listing.reviewsCount}
+        likesCount={listing.likesCount}
       />
 
       <OverviewSection overview={listing.overview} tags={listing.tags} />
@@ -118,7 +140,7 @@ export default function Listing() {
         longitude={listing.longitude}
       />
 
-        <ReviewsSection reviews={listing.reviews} onAddReview={addReview} />
+      <ReviewsSection reviews={listing.allReviews} onAddReview={addReview} />
 
       <RelatedSection related={listing.related} />
 
