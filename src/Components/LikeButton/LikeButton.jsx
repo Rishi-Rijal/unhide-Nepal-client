@@ -6,8 +6,10 @@ import { addLike, removeLike } from "../../api/listing.api";
 const LIKE_KEY = "liked_listing_";
 
 // Helpers
-const getLocalLike = (id) =>
-  localStorage.getItem(LIKE_KEY + id) === "true";
+const getLocalLike = (id) => {
+  const val = localStorage.getItem(LIKE_KEY + id);
+  return val === "true";
+};
 
 const setLocalLike = (id, liked) => {
   if (liked) {
@@ -28,31 +30,30 @@ export default function LikeButton({
   const [loading, setLoading] = useState(false);
   const [popped, setPopped] = useState(false);
 
-  // Sync props
-  useEffect(() => setLiked(initialLiked), [initialLiked]);
-  useEffect(() => setCount(initialCount ?? 0), [initialCount]);
+  useEffect(() => {
+    const storedLike = getLocalLike(id);
+    if (storedLike !== liked) {
+      setLiked(storedLike);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    setCount(initialCount);
+  }, [initialCount]);
 
   async function handleLike(e) {
     e.stopPropagation();
     if (!id || loading) return;
 
-    // Prevent liking again
-    if (!liked && getLocalLike(id)) {
-      console.log("Already liked this listing locally.");
-      return;
-    }
-
     const nextLiked = !liked;
     const optimisticCount = count + (nextLiked ? 1 : -1);
 
-    // Optimistic UI update
     setLiked(nextLiked);
     setCount(Math.max(0, optimisticCount));
     setPopped(true);
     setTimeout(() => setPopped(false), 180);
     setLoading(true);
 
-    // Save in browser
     setLocalLike(id, nextLiked);
 
     try {
@@ -63,8 +64,6 @@ export default function LikeButton({
       }
     } catch (error) {
       console.error("Like failed:", error);
-
-      // rollback UI
       setLiked(!nextLiked);
       setCount(count);
       setLocalLike(id, !nextLiked);
