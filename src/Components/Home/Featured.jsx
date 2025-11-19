@@ -1,10 +1,10 @@
-import FeatureCard from "../FeatureCard/FeatureCard";
-import Container from "../Container/Container";
+import FeatureCard from "../FeatureCard/FeatureCard.jsx";
+import Container from "../Container/Container.jsx";
 
 const Featured = () => (
   <section id="explore" className="py-10 bg-white">
     <Container>
-      <h2 className="mb-6 text-center text-2xl font-bold text-slate-800">Featured Hidden Gems</h2>
+      <h2 className="mb-6 text-center text-2xl font-bold text-slate-800">Featured Gems</h2>
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         <FeatureCard
           image="https://images.unsplash.com/photo-1642156456271-458c1d19af24?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=687"
