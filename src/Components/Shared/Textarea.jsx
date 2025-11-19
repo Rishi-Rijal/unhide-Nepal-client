@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function Textarea({ id, ...props }) {
   return (
     <textarea
