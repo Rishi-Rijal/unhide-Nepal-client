@@ -1,7 +1,7 @@
 import { useState } from "react";
 import StarRating from "../StarRating/StarRating.jsx";
 
-export default function ReviewForm({ onSubmit }) {
+export default function ReviewForm({ onSubmit, onCancel }) {
   const [author, setAuthor] = useState("");
   const [rating, setRating] = useState(0);
   const [text, setText] = useState("");
@@ -45,7 +45,16 @@ export default function ReviewForm({ onSubmit }) {
       />
 
       {/* Submit */}
-      <div className="flex justify-end pt-2">
+      <div className="flex justify-end gap-2 pt-2">
+        {onCancel && (
+          <button
+            type="button"
+            onClick={onCancel}
+            className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-md transition"
+          >
+            Cancel
+          </button>
+        )}
         <button
           className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 rounded-md transition shadow-sm"
         >
