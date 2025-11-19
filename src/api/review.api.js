@@ -27,5 +27,22 @@ const addUserReview = async ({ postId, author, rating, text }) => {
     }
 }
 
-export { getRatingsByListingID, addUserReview }
+const updateReview = async (reviewId, { rating, reviewMsg }) => {
+    try {
+        const response = await api.patch(`${RATING_API_BASE}/${reviewId}`, { rating, reviewMsg });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
 
+const deleteReview = async (reviewId) => {
+    try {
+        const response = await api.delete(`${RATING_API_BASE}/${reviewId}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export { getRatingsByListingID, addUserReview, updateReview, deleteReview }
