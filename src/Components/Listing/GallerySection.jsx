@@ -13,6 +13,8 @@ const GallerySection = ({ gallery = [], id, onUpdated }, ref) => {
   const hasActive = activeIndex !== null;
   const rootRef = useRef(null);
   const fileRef = useRef(null);
+  const [pendingFiles, setPendingFiles] = useState([]); // { file, url }
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const showPrev = () => {
     if (!hasActive) return;
@@ -69,18 +71,55 @@ const GallerySection = ({ gallery = [], id, onUpdated }, ref) => {
     return () => window.removeEventListener("keydown", onKey);
   }, [hasActive]);
 
-  const onFilesSelected = async (e) => {
+  const onFilesSelected = (e) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
+
+    // create preview URLs
+    const previews = files.map((f) => ({ file: f, url: URL.createObjectURL(f) }));
+    setPendingFiles(previews);
+    setPreviewOpen(true);
+
+    // reset input so same file can be re-selected later
+    e.target.value = null;
+  };
+
+  // cleanup object URLs when pendingFiles change/cleared
+  useEffect(() => {
+    return () => {
+      (pendingFiles || []).forEach((p) => p.url && URL.revokeObjectURL(p.url));
+    };
+  }, [pendingFiles]);
+
+  const removePendingAt = (index) => {
+    setPendingFiles((prev) => {
+      const next = [...prev];
+      const removed = next.splice(index, 1)[0];
+      if (removed?.url) URL.revokeObjectURL(removed.url);
+      return next;
+    });
+  };
+
+  const cancelPreview = () => {
+    // revoke urls
+    (pendingFiles || []).forEach((p) => p.url && URL.revokeObjectURL(p.url));
+    setPendingFiles([]);
+    setPreviewOpen(false);
+  };
+
+  const uploadPending = async () => {
+    if (!pendingFiles || pendingFiles.length === 0) return;
     try {
+      const files = pendingFiles.map((p) => p.file);
       await addImages(id, files);
       if (typeof onUpdated === 'function') onUpdated();
       showToast('Images uploaded', 'success');
+      (pendingFiles || []).forEach((p) => p.url && URL.revokeObjectURL(p.url));
+      setPendingFiles([]);
+      setPreviewOpen(false);
     } catch (err) {
       console.error(err);
       showToast('Failed to upload images', 'error');
-    } finally {
-      e.target.value = null;
     }
   };
 
@@ -181,6 +220,43 @@ const GallerySection = ({ gallery = [], id, onUpdated }, ref) => {
               <button className="rounded-lg bg-white/50 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-white/40" onClick={() => setActiveIndex(null)}>
                 Close
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Pending files preview modal */}
+      {previewOpen && (
+        <div className="fixed inset-0 z-50 bg-black/70 p-3 sm:p-6" onClick={cancelPreview}>
+          <div className="mx-auto max-w-4xl rounded-2xl bg-white shadow-xl ring-1 ring-slate-200 flex flex-col max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
+            <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-slate-200 bg-white/95 px-4 py-3">
+              <h4 className="text-base font-semibold text-slate-900">Preview Selected Images</h4>
+              <button className="rounded-lg bg-slate-100 px-3 py-1.5 text-sm hover:bg-slate-200" onClick={cancelPreview}>
+                Cancel
+              </button>
+            </div>
+            <div className="overflow-y-auto p-4">
+              {pendingFiles.length === 0 ? (
+                <p className="text-sm text-slate-600">No images selected.</p>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {pendingFiles.map((p, idx) => (
+                    <div key={idx} className="relative">
+                      <img src={p.url} alt={`Pending ${idx + 1}`} className="h-36 w-full rounded-lg object-cover" />
+                      <button
+                        type="button"
+                        className="absolute top-2 right-2 rounded bg-white/80 px-2 py-1 text-xs text-rose-600"
+                        onClick={() => removePendingAt(idx)}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="border-t border-slate-200 p-4 flex justify-end gap-2">
+              <button className="rounded-md px-4 py-2 bg-slate-100 text-sm" onClick={cancelPreview}>Cancel</button>
+              <button className="rounded-md px-4 py-2 bg-sky-600 text-white" onClick={uploadPending} disabled={pendingFiles.length === 0}>Upload</button>
             </div>
           </div>
         </div>
