@@ -2,7 +2,6 @@
 import Hero from "./Components/Home/Hero";
 import Featured from "./Components/Home/Featured";
 import HowItWorks from "./Components/Home/HowItWorks";
-import Testimonials from "./Components/Home/Testimonials";
 import CTA from "./Components/Home/CTA";
 
 export default function Home() {
@@ -11,7 +10,6 @@ export default function Home() {
       <Hero />
       <Featured />
       <HowItWorks />
-      {/* <Testimonials /> */}
       <CTA />
     </div>
   );
