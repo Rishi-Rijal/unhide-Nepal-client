@@ -5,7 +5,7 @@ const LISTINGS_API_BASE = "api/v1/listing";
 
 const getListings = async () => {
   try {
-    const response = await api.get(`/${LISTINGS_API_BASE}/all`);
+    const response = await api.get(`/${LISTINGS_API_BASE}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching listings:", error);
@@ -100,7 +100,7 @@ const createListing = async ({
       formData.append("images", file);
     });
 
-    const response = await api.post(`${LISTINGS_API_BASE}/all`, formData, {
+    const response = await api.post(`/${LISTINGS_API_BASE}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
 
@@ -139,6 +139,98 @@ const removeLike = async (id) => {
   }
 }
 
+const updateDescription = async (id, description) => {
+  try {
+    const response = await api.patch(`/${LISTINGS_API_BASE}/${id}/description`, { description });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+const updateTips = async (id, tips) => {
+  try {
+    const response = await api.patch(`/${LISTINGS_API_BASE}/${id}/tips`, tips);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+const updateTitle = async (id, title) => {
+  try {
+    const response = await api.patch(`/${LISTINGS_API_BASE}/${id}/title`, { title });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+const updateLocation = async (id, latitude, longitude) => {
+  try {
+    const response = await api.patch(`/${LISTINGS_API_BASE}/${id}/location`, { latitude, longitude });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+const updateListing = async (id, { name, description, categories = [], tags = [], latitude, longitude } = {}) => {
+  try {
+    const body = { name, description, categories, tags, latitude, longitude };
+    const response = await api.patch(`/${LISTINGS_API_BASE}/${id}`, body);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+const addImages = async (id, files) => {
+  try {
+    const formData = new FormData();
+    files.forEach((f) => formData.append('images', f));
+    const response = await api.post(`/${LISTINGS_API_BASE}/${id}/images`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+const removeImage = async (id, public_id) => {
+  try {
+    const response = await api.delete(`/${LISTINGS_API_BASE}/${id}/images`, { data: { public_id } });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+const deleteListing = async (id) => {
+  try {
+    const response = await api.delete(`/${LISTINGS_API_BASE}/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+const updateTagsAndCategories = async (id, { categories = [], tags = [] } = {}) => {
+  try {
+    const response = await api.patch(`/${LISTINGS_API_BASE}/${id}/tags-categories`, { categories, tags });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+  
+const sendSuggestion = async (id, { field, suggestion }) => {
+  // try {
+  //   const response = await api.post(`/${LISTINGS_API_BASE}/${id}/suggest`, { field, suggestion });  
+  //   return response.data;
+  // } catch (error) {
+  //   throw error;
+  // }
+}
 
 export {
   getListings,
@@ -146,5 +238,15 @@ export {
   createListing,
   getListing,
   addLike,
-  removeLike
+  removeLike,
+  updateDescription,
+  updateTips,
+  updateTitle,
+  updateLocation,
+  addImages,
+  removeImage,
+  deleteListing,
+  updateListing,
+  updateTagsAndCategories,
+  sendSuggestion
 };
