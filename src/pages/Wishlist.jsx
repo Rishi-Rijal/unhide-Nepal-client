@@ -1,5 +1,5 @@
-import PlaceCard from "./Components/PlaceCard/PlaceCard";
-import { getFavorites } from "./utils/favorites";
+import PlaceCard from "../Components/PlaceCard/PlaceCard";
+import { getFavorites } from "../utils/favorites";
 
 export default function Wishlist() {
   const favs = getFavorites();

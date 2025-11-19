@@ -1,4 +1,4 @@
-import Container from './Components/Container/Container';
+import Container from '../Components/Container/Container';
 
 const PrivacyPolicy = () => {
   return (

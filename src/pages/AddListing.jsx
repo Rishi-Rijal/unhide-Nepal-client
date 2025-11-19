@@ -5,16 +5,15 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import { Navigate, useNavigate } from "react-router-dom";
-import PhotoUploader from "./Components/AddListing/PhotoUploader";
-import Label from "./Components/Shared/Label";
-import Helper from "./Components/Shared/Helper";
-import Input from "./Components/Shared/Input";
-import Textarea from "./Components/Shared/Textarea";
-import Stepper from "./Components/AddListing/Stepper";
-import GROUPS from "./utils/groups";
-import CategoryDropdown from "./Components/CategoryDropdown.jsx";
-import MapView from "./Map.jsx";
-import { createListing } from "./api/listing.api.js";
+import PhotoUploader from "../Components/AddListing/PhotoUploader.jsx";
+import Label from "../Components/Shared/Label.jsx";
+import Input from "../Components/Shared/Input.jsx";
+import Textarea from "../Components/Shared/Textarea.jsx";
+import Stepper from "../Components/AddListing/Stepper.jsx";
+import GROUPS from "../utils/groups.js";
+import CategoryDropdown from "../Components/CategoryDropdown.jsx";
+import MapView from "../Map.jsx";
+import { createListing } from "../api/listing.api.js";
 
 const uniq = (arr) => Array.from(new Set(arr));
 const tagsFor = (categories) => uniq(categories.flatMap((c) => GROUPS[c] || []));

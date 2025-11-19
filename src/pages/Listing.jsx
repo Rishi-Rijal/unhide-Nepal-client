@@ -1,19 +1,19 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import HeroSection from "./Components/Listing/HeroSection";
-import OverviewSection from "./Components/Listing/OverviewSection";
-import LocationSection from "./Components/Listing/LocationSection";
-import TipsSection from "./Components/Listing/TipsSection";
-import GallerySection from "./Components/Listing/GallerySection";
-import ReviewsSection from "./Components/Listing/ReviewsSection";
-import RelatedSection from "./Components/Listing/RelatedSection";
-import { getListing } from "./api/listing.api";
-import { addUserReview, updateReview, deleteReview } from "./api/review.api.js";
-import { getRatingsByListingID } from "./api/review.api.js"
-import LocationModal from "./Components/Shared/LocationModal";
-import { updateLocation } from "./api/listing.api";
-import { useToast } from "./Components/Shared/Toast";
-import SuggestEditForm from "./Components/Shared/SuggestEditForm";
+import HeroSection from "../Components/Listing/HeroSection.jsx";
+import OverviewSection from "../Components/Listing/OverviewSection.jsx";
+import LocationSection from "../Components/Listing/LocationSection.jsx";
+import TipsSection from "../Components/Listing/TipsSection.jsx";
+import GallerySection from "../Components/Listing/GallerySection.jsx";
+import ReviewsSection from "../Components/Listing/ReviewsSection.jsx";
+import RelatedSection from "../Components/Listing/RelatedSection.jsx";
+import { getListing } from "../api/listing.api.js";
+import { addUserReview, updateReview, deleteReview } from "../api/review.api.js";
+import { getRatingsByListingID } from "../api/review.api.js"
+import LocationModal from "../Components/Shared/LocationModal.jsx";
+import { updateLocation } from "../api/listing.api.js";
+import { useToast } from "../Components/Shared/Toast.jsx";
+import SuggestEditForm from "../Components/Shared/SuggestEditForm.jsx";
 
 export default function Listing() {
   const { id } = useParams(); // /Listing/:id

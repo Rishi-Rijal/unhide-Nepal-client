@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import Container from './Components/Container/Container';
-import { getConsent } from './utils/cookieConsent';
+import Container from '../Components/Container/Container';
+import { getConsent } from '../utils/cookieConsent';
 
 const emailIsValid = (email) => {
   return /^[\w.%+-]+@[\w.-]+\.[A-Za-z]{2,}$/.test(String(email).trim());

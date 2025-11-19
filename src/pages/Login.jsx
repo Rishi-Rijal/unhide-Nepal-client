@@ -8,7 +8,7 @@ export default function LoginPage() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    // TODO: wire to your auth API
+    // TODO: wire to  auth API
     alert(`Logging in as ${form.email}`);
   }
 

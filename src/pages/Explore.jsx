@@ -1,14 +1,13 @@
-
 import { useRef, useState, useMemo, useEffect } from "react";
 import { LocateFixed, Plus, Search, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
-import PlaceCard from "./Components/PlaceCard/PlaceCard";
-import SearchBox from "./Components/SearchBox.jsx/SearchBox";
-import CategoryDropdown from "./Components/CategoryDropdown.jsx";
-import GROUPS from "./utils/groups.js";
+import PlaceCard from "../Components/PlaceCard/PlaceCard";
+import SearchBox from "../Components/SearchBox/SearchBox";
+import CategoryDropdown from "../Components/CategoryDropdown.jsx";
+import GROUPS from "../utils/groups.js";
 import axios from "axios";
-import MapView from "./Map.jsx";
-import { getListings, getFilteredListings } from "./api/listing.api.js";
+import MapView from "../Map.jsx";
+import { getListings, getFilteredListings } from "../api/listing.api.js";
 
 const REVERSE_GEOMAPING_KEY = import.meta.env.VITE_REVERSE_GEOMAPING_KEY
 
@@ -114,7 +113,7 @@ function FilterControls({
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-col items-start gap-1">
           <label htmlFor="distance" className="pb-1 text-xs text-slate-600">
-            Distance:{" "}
+            Distance: {" "}
             <span className="font-semibold text-slate-800">
               {distance} km
             </span>
@@ -420,5 +419,3 @@ export default function Explore() {
     </main>
   );
 }
-
-
