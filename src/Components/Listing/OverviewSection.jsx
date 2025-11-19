@@ -1,8 +1,8 @@
 import { useState, useRef, useImperativeHandle } from "react";
-import { useToast } from "../Shared/Toast";
+import { useToast } from "../Shared/Toast.jsx";
 import Badge from "../Badge/Badge";
-import CategoryDropdown from "../CategoryDropdown";
-import GROUPS from "../../utils/groups";
+import CategoryDropdown from "../CategoryDropdown.jsx";
+import GROUPS from "../../utils/groups.js";
 import { updateDescription, updateTagsAndCategories } from "../../api/listing.api";
 
 const OverviewSection = ({ id, title, overview = "", tags = [], categories = [], latitude, longitude, onUpdated }, ref) => {

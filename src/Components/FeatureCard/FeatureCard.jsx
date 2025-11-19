@@ -1,4 +1,4 @@
-import  Badge  from "../_archived/Badge/Badge.jsx";
+import  Badge  from "../Badge/Badge.jsx";
 import StarRating from "../StarRating/StarRating.jsx";
 
 const FeatureCard = ({ image, tag, title, rating }) => (
