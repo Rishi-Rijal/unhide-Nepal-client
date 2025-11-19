@@ -1,10 +1,9 @@
-import React from "react";
+import {useEffect, useState} from "react";
 
 export default function PhotoUploader({ photos = [], setPhotos, maxFiles = 12 }) {
-  const fileInputRef = React.useRef(null);
-  const [previews, setPreviews] = React.useState([]);
-
-  React.useEffect(() => {
+  const fileInputRef = useRef(null);
+  const [previews, setPreviews] = useState([]);
+  useEffect(() => {
     if (!photos || photos.length === 0) {
       setPreviews([]);
       return;

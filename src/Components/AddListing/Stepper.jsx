@@ -1,4 +1,4 @@
-import React from "react";
+import { Fragment } from "react";
 import { Info, MapPin, Image as ImageIcon, Sparkles, FileCheck2 } from "lucide-react";
 import Step from "./Step";
 
@@ -13,10 +13,10 @@ export default function Stepper({ current }) {
   return (
     <div className="flex items-center gap-3 md:gap-4 overflow-x-auto py-2 px-4 scroll-px-4 justify-start md:justify-center">
       {steps.map((s, i) => (
-        <React.Fragment key={s.title}>
+        <Fragment key={s.title}>
           <Step title={s.title} icon={s.icon} index={i} current={current} />
           {i !== steps.length - 1 && <div className="hidden sm:block h-px w-5 bg-slate-200" />}
-        </React.Fragment>
+        </Fragment>
       ))}
     </div>
   );

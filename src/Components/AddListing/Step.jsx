@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function Step({ title, icon: Icon, index, current }) {
   const state = index < current ? "done" : index === current ? "current" : "todo";
   const base = "flex flex-col items-center gap-2 min-w-[84px]";
