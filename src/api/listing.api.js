@@ -1,5 +1,6 @@
 import { diff } from "maplibre-gl";
 import api from "./axios.api.js";
+import { getLocationFromLongLat } from "../pages/Explore.jsx";
 
 const LISTINGS_API_BASE = "api/v1/listing";
 
@@ -61,10 +62,8 @@ const getFilteredListings = async ({
 
     const url = `/${LISTINGS_API_BASE}/filter?${params.toString()}`;
     const response = await api.get(url);
-
     return response.data;
   } catch (error) {
-    console.error("Error fetching data:", error);
     throw error;
   }
 };
@@ -99,6 +98,14 @@ const createListing = async ({
     photos.forEach((file) => {
       formData.append("images", file);
     });
+
+    const locationName = await getLocationFromLongLat(latitude, longitude);
+    formData.append("physicalAddress",
+      `${locationName?.city_district ||
+      locationName?.road ||
+      ""} ${locationName?.county ||
+      locationName?.state ||
+      ""}, ${locationName?.country}`);
 
     const response = await api.post(`/${LISTINGS_API_BASE}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
@@ -222,7 +229,7 @@ const updateTagsAndCategories = async (id, { categories = [], tags = [] } = {}) 
     throw error;
   }
 }
-  
+
 const sendSuggestion = async (id, { field, suggestion }) => {
   // try {
   //   const response = await api.post(`/${LISTINGS_API_BASE}/${id}/suggest`, { field, suggestion });  
