@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useState, useRef} from "react";
 
 export default function PhotoUploader({ photos = [], setPhotos, maxFiles = 12 }) {
   const fileInputRef = useRef(null);

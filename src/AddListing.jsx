@@ -1,4 +1,4 @@
-import React from "react";
+import {useRef, useState, useMemo} from "react";
 import {
   CheckCircle2,
   ChevronRight,
@@ -21,8 +21,8 @@ const tagsFor = (categories) => uniq(categories.flatMap((c) => GROUPS[c] || []))
 
 // --- Main component ---
 export default function NewListing() {
-  const [step, setStep] = React.useState(0);
-  const [form, setForm] = React.useState({
+  const [step, setStep] = useState(0);
+  const [form, setForm] = useState({
     name: "Everest Base Camp Trek",
     description:
       "An iconic trek offering breathtaking views of the world's highest peak and an immersive cultural experience in the Sherpa villages. Prepare for challenging terrain and unpredictable weather.",
@@ -41,8 +41,8 @@ export default function NewListing() {
       extra: "Carry cash; ATMs are limited along the trail.",
     },
   });
-  const categoryGroups = React.useMemo(() => ({ Categories: Object.keys(GROUPS) }), []);
-  const tagGroups = React.useMemo(() => {
+  const categoryGroups = useMemo(() => ({ Categories: Object.keys(GROUPS) }), []);
+  const tagGroups = useMemo(() => {
     if (form.categories.length === 0) return {};
     const out = {};
     form.categories.forEach((c) => {
@@ -69,7 +69,7 @@ export default function NewListing() {
     }));
   };
 
-  const [errors, setErrors] = React.useState({});
+  const [errors, setErrors] = useState({});
 
   function validateStep(s) {
     const errs = {};

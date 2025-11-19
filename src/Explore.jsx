@@ -151,9 +151,10 @@ function PlaceCardsGrid({ places }) {
       id: p._id || i,
       image: p.images?.[0]?.url || "https://images.unsplash.com/photo-1529733905113-027ed85d7e33?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bmVwYWx8ZW58MHx8MHx8fDA%3D",          // first image URL
       title: p.name || "",
-      district: "",                             // not in API yet empty for now
+      district: p?.physicalAddress?.substring(0, p.physicalAddress.lastIndexOf(",")),                             // not in API yet empty for now
       rating: typeof p.averageRating === "number" ? p.averageRating : 0,
       tags: Array.isArray(p.tags) ? p.tags : [],
+      categories: Array.isArray(p.categories) ? p.categories : [],
       description: p.description || "",
     }))
     : [];
@@ -169,7 +170,7 @@ function PlaceCardsGrid({ places }) {
   );
 }
 
-const getLocationFromLongLat = async (lat, lng) => {
+export const getLocationFromLongLat = async (lat, lng) => {
   const location = await axios.get(`https://us1.locationiq.com/v1/reverse?key=${REVERSE_GEOMAPING_KEY}&lat=${lat}&lon=${lng}&format=json`)
   return location.data.address;
 }
