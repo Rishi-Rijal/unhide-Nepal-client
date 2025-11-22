@@ -1,16 +1,22 @@
-import React from "react";
-import { Mail, Lock, User, Check } from "lucide-react";
+import { useState } from "react";
+import { Mail, Lock, User } from "lucide-react";
 import { Link } from "react-router-dom";
+import { registerUser } from "../api/user.api.js";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUser } from "../utils/authSlice.js";
 
 export default function RegisterPage() {
-  const [form, setForm] = React.useState({
+  const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
     confirm: "",
     agree: false,
   });
-  const [errors, setErrors] = React.useState({});
+  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   function validate() {
     const e = {};
@@ -23,11 +29,18 @@ export default function RegisterPage() {
     return Object.keys(e).length === 0;
   }
 
-  function submit(e) {
+  async function submit(e) {
     e.preventDefault();
     if (!validate()) return;
-    // TODO: hook up to your API
-    alert("Registered successfully!\n" + JSON.stringify({ name: form.name, email: form.email }, null, 2));
+    try {
+      const response = await registerUser({ name: form.name, email: form.email, password: form.password });
+      dispatch(setUser(response.data.user));
+      navigate("/")
+    } catch (error) {
+      console.log("Error response:", error);
+      const errorMessage = error?.response?.data?.message || error.message;
+      console.log("Registration error:", errorMessage);
+    }
   }
 
   return (
