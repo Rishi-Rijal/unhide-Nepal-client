@@ -8,7 +8,6 @@ export default function PlaceCard({
   title,
   district,
   rating = 0,
-  tags = [],
   categories = [],
   description,
 }) {
@@ -33,7 +32,7 @@ export default function PlaceCard({
         }
       }}
     >
-      <div className="bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
+  <div className="bg-slate-50 rounded-2xl shadow-sm ring-1 ring-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
         <div className="h-44 w-full overflow-hidden relative">
           <img src={image} alt={title} className="h-44 w-full object-cover" />
 
