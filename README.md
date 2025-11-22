@@ -25,7 +25,7 @@ This README covers the client app located at the repository root of `unhide-Nepa
 1. Clone the repo and change into the client folder:
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/Rishi-Rijal/unhide-Nepal-client.git
 cd unhide-Nepal-client
 ```
 
@@ -54,7 +54,7 @@ npm run dev
 - The client currently uses a default API base URL set in `src/api/axios.api.js`. The file contains:
 
 ```js
-const baseURL = "https://unhide-nepal-server-gdfeb5g8dehrfedg.germanywestcentral-01.azurewebsites.net/";
+const baseURL = your backend url;
 ```
 
 - Requests are made with `withCredentials: true` which means the client expects cookie-based authentication from the API. If you run the server locally, update the `baseURL` value to point at your local server (example: `http://localhost:5000/`) or refactor `axios.api.js` to read from a Vite environment variable:
