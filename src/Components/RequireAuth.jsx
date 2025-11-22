@@ -6,9 +6,12 @@ const RequireAuth = ({ children }) => {
   const user = useSelector((state) => state.auth.user);
   const location = useLocation();
 
-  // If no user, redirect to Login and preserve the intended location
-  if (!user) {
-    return <Navigate to="/Login" state={{ from: location }} replace />;
+  if (user === null) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  if (typeof user === 'undefined') {
+    return null;
   }
 
   return children;
