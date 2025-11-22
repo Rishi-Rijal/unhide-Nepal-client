@@ -1,5 +1,6 @@
 import { useState } from "react";
 import StarRating from "../StarRating/StarRating.jsx";
+import { useSelector } from "react-redux";
 
 export default function ReviewItem(props) {
     const { _id, userName, reviewMsg, rating, onEdit, onDelete } = props;
@@ -9,6 +10,8 @@ export default function ReviewItem(props) {
     const [localMsg, setLocalMsg] = useState(reviewMsg || "");
     const [localRating, setLocalRating] = useState(rating || 0);
     const [hidden, setHidden] = useState(false);
+    const user = useSelector((state) => state.auth.user);
+    const isAdmin = user?.isAdmin;
 
     if (hidden) return null;
 
@@ -39,7 +42,8 @@ export default function ReviewItem(props) {
                 <div className="flex items-center gap-3">
                     <StarRating value={localRating} size={3.5} readonly={!editing} onChange={editing ? setLocalRating : undefined} />
 
-                    <div className="relative">
+                    {isAdmin && (
+                      <div className="relative">
                         <button
                             onClick={() => setShowMenu((s) => !s)}
                             className="p-1 rounded-full hover:bg-slate-100"
@@ -69,7 +73,7 @@ export default function ReviewItem(props) {
                                 </button>
                             </div>
                         )}
-                    </div>
+                    </div>)}
                 </div>
             </div>
 

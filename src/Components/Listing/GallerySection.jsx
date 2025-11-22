@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useImperativeHandle } from "react";
 import { removeImage, addImages } from "../../api/listing.api";
 import { useToast } from "../Shared/Toast";
 import ConfirmModal from "../Shared/ConfirmModal";
+import { useSelector } from "react-redux";
 
 const MAX_SHOW = 9;
 
@@ -15,6 +16,8 @@ const GallerySection = ({ gallery = [], id, onUpdated }, ref) => {
   const fileRef = useRef(null);
   const [pendingFiles, setPendingFiles] = useState([]); // { file, url }
   const [previewOpen, setPreviewOpen] = useState(false);
+  const user = useSelector((state) => state.auth.user);
+  const isAdmin = user?.isAdmin;
 
   const showPrev = () => {
     if (!hasActive) return;
@@ -124,7 +127,7 @@ const GallerySection = ({ gallery = [], id, onUpdated }, ref) => {
   };
 
   return (
-    <section className="py-6 max-w-5xl mx-auto px-4">
+    <section className="py-6">
       <div className="flex items-center justify-between">
         <h3 className="text-base font-semibold text-slate-900">Photo Gallery</h3>
         <div className="flex items-center gap-2">
@@ -201,7 +204,7 @@ const GallerySection = ({ gallery = [], id, onUpdated }, ref) => {
             </button>
             {/* Close + Remove */}
             <div className="absolute top-4 right-4 flex gap-2">
-              {items[activeIndex]?.public_id && (
+              {items[activeIndex]?.public_id && isAdmin && (
                 <>
                   <button
                     className="rounded-lg bg-white/20 px-3 py-1.5 text-sm font-medium text-rose-600 hover:bg-white/30"

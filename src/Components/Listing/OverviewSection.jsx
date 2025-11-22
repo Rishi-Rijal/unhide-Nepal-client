@@ -4,8 +4,9 @@ import Badge from "../Badge/Badge";
 import CategoryDropdown from "../CategoryDropdown.jsx";
 import GROUPS from "../../utils/groups.js";
 import { updateDescription, updateTagsAndCategories } from "../../api/listing.api";
+import { useSelector } from "react-redux";
 
-const OverviewSection = ({ id, title, overview = "", tags = [], categories = [], latitude, longitude, onUpdated }, ref) => {
+const OverviewSection = ({ id, overview = "", tags = [], categories = [], onUpdated }, ref) => {
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(overview);
   const [saving, setSaving] = useState(false);
@@ -14,6 +15,8 @@ const OverviewSection = ({ id, title, overview = "", tags = [], categories = [],
   const [editingMeta, setEditingMeta] = useState(false);
   const [localCategories, setLocalCategories] = useState(categories || []);
   const [localTags, setLocalTags] = useState(tags || []);
+  const user = useSelector((state) => state.auth.user);
+  const isAdmin = user?.isAdmin;
 
   const startEdit = () => {
     setValue(overview || "");
@@ -71,10 +74,10 @@ const OverviewSection = ({ id, title, overview = "", tags = [], categories = [],
   }));
 
   return (
-    <section ref={rootRef} className="py-8 max-w-5xl mx-auto px-4">
+    <section ref={rootRef} className="py-8">
       <div className="flex gap-3 align-items-center">
         <h2 className="text-lg font-semibold text-slate-900">Overview</h2>
-        {!editing && (
+        {!editing && isAdmin && (
           <button aria-label="Edit title" title="Edit title" className="text-slate-500 hover:text-slate-700 p-1 rounded" onClick={() => startEdit(true)}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" className="inline-block">
               <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z" />
@@ -82,7 +85,7 @@ const OverviewSection = ({ id, title, overview = "", tags = [], categories = [],
             <span className="sr-only">Edit</span>
           </button>
         )}
-
+        {isAdmin && (
         <div className="ml-auto">
           {!editingMeta ? (
             <button onClick={startEditMeta} className="text-sm bg-amber-500 text-white px-3 py-1 rounded-md">Edit Tags & Categories</button>
@@ -92,7 +95,7 @@ const OverviewSection = ({ id, title, overview = "", tags = [], categories = [],
               <button onClick={() => setEditingMeta(false)} disabled={saving} className="text-sm border px-3 py-1 rounded-md">Cancel</button>
             </div>
           )}
-        </div>
+        </div>)}
       </div>
 
       {!editing ? (

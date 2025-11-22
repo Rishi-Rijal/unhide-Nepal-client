@@ -2,6 +2,7 @@ import { useState, useRef, useImperativeHandle } from "react";
 import { useToast } from "../Shared/Toast";
 import { Info } from "lucide-react";
 import { updateTips } from "../../api/listing.api";
+import { useSelector } from "react-redux";
 
 const mapTitleToField = (title) => {
   if (title === "Extra Advice") return "extraAdvice";
@@ -17,6 +18,8 @@ const TipsSection = ({ id, tips = [], onUpdated }, ref) => {
   const [saving, setSaving] = useState(false);
   const { showToast } = useToast();
   const rootRef = useRef(null);
+  const user = useSelector((state) => state.auth.user);
+  const isAdmin = user?.isAdmin; 
 
   const startEdit = (i, t) => {
     setEditingIndex(i);
@@ -69,7 +72,7 @@ const TipsSection = ({ id, tips = [], onUpdated }, ref) => {
   };
 
   return (
-    <section className="py-6 max-w-5xl mx-auto px-4">
+    <section className="py-6">
       <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
         <h3 className="text-base font-semibold text-slate-900 flex items-center gap-2">
           <Info className="h-5 w-5 text-slate-500" /> Tips & Access Information
@@ -79,7 +82,7 @@ const TipsSection = ({ id, tips = [], onUpdated }, ref) => {
             <div key={t.title}>
               <div className="flex gap-3 items-center">
                 <div className="font-medium text-slate-800">{t.title}</div>
-                {editingIndex !== i && (
+                {editingIndex !== i && isAdmin && (
                     <button aria-label="Edit title" title="Edit title" className="text-slate-500 hover:text-slate-700 p-1 rounded" onClick={() => startEdit(i,t)}>
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" className="inline-block">
                         <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z" />

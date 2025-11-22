@@ -13,7 +13,9 @@ const ReviewsSection = ({ reviews = [], onAddReview, onEditReview, onDeleteRevie
     try {
       const y = prevScroll.current ?? 0;
       window.scrollTo(0, y);
-    } catch (e) {}
+    } catch{
+      // ignore
+    }
   };
 
   const toggleForm = () => {
@@ -28,13 +30,13 @@ const ReviewsSection = ({ reviews = [], onAddReview, onEditReview, onDeleteRevie
         const y = prevScroll.current || 0;
         window.scrollTo(0, y);
       }
-    } catch (e) {
+    } catch {
       setShowForm((s) => !s);
     }
   };
 
   return (
-    <section className="py-8 max-w-5xl mx-auto px-4">
+    <section className="py-8">
       <h3 className="text-base font-semibold text-slate-900">Reviews</h3>
 
       {onAddReview && (
