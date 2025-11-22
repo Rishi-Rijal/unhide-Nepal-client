@@ -1,3 +1,4 @@
+This project is hosted at: https://zealous-desert-0541d1303.3.azurestaticapps.net/
 # Unhide Nepal — Client
 
 This is the React client for the Unhide Nepal project — a listing/explore web app built with Vite, React and Tailwind CSS. The client communicates with the server API for authentication, listings, reviews and admin functions.
