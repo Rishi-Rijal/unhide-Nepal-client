@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import { LocateFixed, Plus, Search, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import PlaceCard from "../Components/PlaceCard/PlaceCard";
@@ -7,7 +7,8 @@ import CategoryDropdown from "../Components/CategoryDropdown.jsx";
 import GROUPS from "../utils/groups.js";
 import axios from "axios";
 import MapView from "../Map.jsx";
-import { getListings, getFilteredListings } from "../api/listing.api.js";
+import Container from "../Components/Container/Container";
+import { getFilteredListings } from "../api/listing.api.js";
 
 const REVERSE_GEOMAPING_KEY = import.meta.env.VITE_REVERSE_GEOMAPING_KEY
 
@@ -21,8 +22,6 @@ function FilterControls({
   setDistance,
   selectedCategories,
   setSelectedCategories,
-  selectedTags,
-  setSelectedTags,
   onUseMyLocation,
   onSearch,
   onOpenMapPicker,
@@ -44,7 +43,7 @@ function FilterControls({
 
 
   return (
-    <div className="relative z-2 rounded-xl border border-slate-200 bg-white/60 backdrop-blur supports-[backdrop-filter]:bg-white/40 p-3 md:p-4">
+    <div className="lg:px-10 relative z-2 rounded-xl border border-slate-200 bg-white/60 backdrop-blur supports-[backdrop-filter]:bg-white/40 p-3 md:p-4">
       <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto] md:items-center gap-3">
         {/* Location input */}
         <div onBlur={commitLocation} className="relative">
@@ -160,7 +159,7 @@ function PlaceCardsGrid({ places }) {
 
   return (
     <div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {normalized.map((place) => (
           <PlaceCard key={place.id} {...place} />
         ))}
@@ -201,11 +200,9 @@ export default function Explore() {
   const [isMapPickerOpen, setIsMapPickerOpen] = useState(false);
   const [places, setPlaces] = useState([])
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [selectedTags, setSelectedTags] = useState([]);
   const lastChangeRef = useRef(null); // "coords" | "text" | null
   const [cursor, setCursor] = useState(null);
   const [hasNextPage, setHasNextPage] = useState(false)
-  const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
 
@@ -239,7 +236,6 @@ export default function Explore() {
 
   const onSearch = async () => {
     try {
-      setIsLoading(true);
       setError(null);
       const filterOptions = buildFilterOptions();
       const filteredListings = await getFilteredListings(filterOptions);
@@ -250,9 +246,7 @@ export default function Explore() {
     } catch (error) {
       console.error("Error during search:", error);
       setError("Failed to fetch listings. Please try again later.");
-    } finally {
-      setIsLoading(false);
-    }
+    } 
   };
 
   const handleLoadMore = async () => {
@@ -334,7 +328,7 @@ export default function Explore() {
 
   return (
     <main className="mt-10 bg-slate-50">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+      <Container className="py-8">
         <FilterControls
           locationQuery={locationQuery}
           setLocationQuery={setLocationQuery}
@@ -358,6 +352,7 @@ export default function Explore() {
         <div className="mt-6">
           <PlaceCardsGrid places={places} />
         </div>
+
         {hasNextPage && (
           <div className="mt-6 flex justify-center">
             <button
@@ -370,12 +365,11 @@ export default function Explore() {
             </button>
           </div>
         )}
-
-      </div>
+      </Container>
 
       <Link
         to="/Listing/New"
-        className="fixed bottom-11 right-6 inline-flex items-center gap-2 rounded-full bg-rose-600 px-5 py-3 text-sm font-semibold text-white shadow-lg hover:bg-rose-700"
+        className="fixed lg:bottom-11 sm:bottom-6 right-6 inline-flex items-center gap-2 rounded-full bg-rose-600 px-5 py-3 text-sm font-semibold text-white shadow-lg hover:bg-rose-700"
         aria-label="Add Place"
       >
         <Plus className="h-4 w-4" /> Add Place

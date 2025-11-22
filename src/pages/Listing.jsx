@@ -14,6 +14,7 @@ import LocationModal from "../Components/Shared/LocationModal.jsx";
 import { updateLocation } from "../api/listing.api.js";
 import { useToast } from "../Components/Shared/Toast.jsx";
 import SuggestEditForm from "../Components/Shared/SuggestEditForm.jsx";
+import Container from "../Components/Container/Container.jsx";
 
 export default function Listing() {
   const { id } = useParams(); // /Listing/:id
@@ -32,15 +33,13 @@ export default function Listing() {
       setLoading(true);
       setError("");
 
-      const response = await getListing(id);
-      const data = response.data;
-      const heroImage = data.images?.[0]?.url || "";
+      const data = await getListing(id);
       const galleryImages = (data.images || []).map((img) => ({ url: img.url, public_id: img.public_id }));
       const uiListing = {
-        locationImage: galleryImages[1]?.url || heroImage,
+        locationImage: galleryImages[1]?.url || "",
         id: data._id || id,
         title: data.name,
-        hero: heroImage,
+        hero: data.coverImage || galleryImages[0]?.url || "",
         rating: data.averageRating || 0,
         reviewsCount: data.ratingsCount || 0,
         likesCount: data.likesCount || 0,
@@ -119,15 +118,14 @@ export default function Listing() {
         return { ...base, allReviews };
       });
       showToast('Review updated', 'success');
-    } catch (error) {
-      
+    } catch {
+      showToast('Failed to update review', 'error');
     }
   };
 
   const handleDeleteReview = async (reviewId) => {
     try {
-      const res = await deleteReview(reviewId);
-
+      await deleteReview(reviewId);
       setListing((prev) => {
         const base = prev || {};
         const allReviews = (base.allReviews || []).filter((r) => (r._id || r.id) !== reviewId);
@@ -135,7 +133,7 @@ export default function Listing() {
         return { ...base, allReviews, reviewsCount };
       });
       showToast('Review deleted', 'success');
-    } catch (error) {
+    } catch {
       showToast('Failed to delete review', 'error');
     }
   };
@@ -182,60 +180,62 @@ export default function Listing() {
   };
 
   return (
-    <main className="pt-16 bg-white">
-      <HeroSection
-        title={listing.title}
-        id={listing.id}
-        hero={listing.hero}
-        rating={listing.rating}
-        reviewsCount={listing.reviewsCount}
-        likesCount={listing.likesCount}
-        likedByUser={listing.likedByUser}
-        onUpdated={fetchListing}
-        onOpenOverview={openOverviewEditor}
-        onOpenTips={openTipsEditor}
-        onOpenGallery={openGalleryManager}
-        onOpenLocation={openLocationModal}
-      />
+    <main className="pt-16 lg:px-4 bg-white">
+      <Container>
+        <HeroSection
+          title={listing.title}
+          id={listing.id}
+          hero={listing.hero}
+          rating={listing.rating}
+          reviewsCount={listing.reviewsCount}
+          likesCount={listing.likesCount}
+          likedByUser={listing.likedByUser}
+          onUpdated={fetchListing}
+          onOpenOverview={openOverviewEditor}
+          onOpenTips={openTipsEditor}
+          onOpenGallery={openGalleryManager}
+          onOpenLocation={openLocationModal}
+        />
 
-      <OverviewSection
-        ref={overviewRef}
-        id={listing.id}
-        title={listing.title}
-        overview={listing.overview}
-        tags={listing.tags}
-        categories={listing.categories}
-        latitude={listing.latitude}
-        longitude={listing.longitude}
-        onUpdated={fetchListing}
-      />
+        <OverviewSection
+          ref={overviewRef}
+          id={listing.id}
+          title={listing.title}
+          overview={listing.overview}
+          tags={listing.tags}
+          categories={listing.categories}
+          latitude={listing.latitude}
+          longitude={listing.longitude}
+          onUpdated={fetchListing}
+        />
 
-      <GallerySection ref={galleryRef} gallery={listing.gallery} id={listing.id} onUpdated={fetchListing} />
-      <TipsSection ref={tipsRef} id={listing.id} tips={listing.tips} onUpdated={fetchListing} />
+        <GallerySection ref={galleryRef} gallery={listing.gallery} id={listing.id} onUpdated={fetchListing} />
+        <TipsSection ref={tipsRef} id={listing.id} tips={listing.tips} onUpdated={fetchListing} />
 
-      {/* Location modal */}
-      <LocationModal
-        open={locationModalOpen}
-        latitude={locationDraft.latitude}
-        longitude={locationDraft.longitude}
-        onCancel={closeLocationModal}
-        onSave={saveLocation}
-      />
+        {/* Location modal */}
+        <LocationModal
+          open={locationModalOpen}
+          latitude={locationDraft.latitude}
+          longitude={locationDraft.longitude}
+          onCancel={closeLocationModal}
+          onSave={saveLocation}
+        />
 
-      <LocationSection
-        title={listing.title}
-        latitude={listing.latitude}
-        longitude={listing.longitude}
-        onOpenLocation={openLocationModal}
-      />
+        <LocationSection
+          title={listing.title}
+          latitude={listing.latitude}
+          longitude={listing.longitude}
+          onOpenLocation={openLocationModal}
+        />
 
-      <ReviewsSection reviews={listing.allReviews} onAddReview={addReview} onEditReview={editReview} onDeleteReview={handleDeleteReview} />
+        <ReviewsSection reviews={listing.allReviews} onAddReview={addReview} onEditReview={editReview} onDeleteReview={handleDeleteReview} />
 
-      <RelatedSection related={listing.related} />
+        <RelatedSection related={listing.related} />
 
-      <SuggestEditForm listingId={listing.id} />
+        <SuggestEditForm listingId={listing.id} />
 
-      <div className="h-12" />
+        <div className="h-12" />
+      </Container>
     </main>
 
   );
