@@ -1,10 +1,10 @@
-import {useRef, useState, useMemo} from "react";
+import { useState, useMemo } from "react";
 import {
   CheckCircle2,
   ChevronRight,
   ChevronLeft,
 } from "lucide-react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import PhotoUploader from "../Components/AddListing/PhotoUploader.jsx";
 import Label from "../Components/Shared/Label.jsx";
 import Input from "../Components/Shared/Input.jsx";
@@ -21,23 +21,24 @@ const tagsFor = (categories) => uniq(categories.flatMap((c) => GROUPS[c] || []))
 // --- Main component ---
 export default function NewListing() {
   const [step, setStep] = useState(0);
+  const navigate = useNavigate();
+  const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
-    name: "Everest Base Camp Trek",
-    description:
-      "An iconic trek offering breathtaking views of the world's highest peak and an immersive cultural experience in the Sherpa villages. Prepare for challenging terrain and unpredictable weather.",
+    name: "",
+    description: "",
     categories: [],
     tags: [],
     // location
     latitude: "",
     longitude: "",
     // photos
-    photos: [], // will store File objects
+    photos: [], 
     // tips
     tips: {
-      permits: true,
-      bestSeason: "Spring & Autumn",
-      difficulty: "Challenging",
-      extra: "Carry cash; ATMs are limited along the trail.",
+      permits: false,
+      bestSeason: "",
+      difficulty: "",
+      extra: "",
     },
   });
   const categoryGroups = useMemo(() => ({ Categories: Object.keys(GROUPS) }), []);
@@ -49,7 +50,6 @@ export default function NewListing() {
     });
     return out;
   }, [form.categories]);
-  const navigate = useNavigate()
 
   const handleCategoriesChange = (nextCategories) => {
     const validTags = tagsFor(nextCategories);
@@ -74,7 +74,10 @@ export default function NewListing() {
     const errs = {};
     if (s === 0) {
       if (!form.name || !form.name.trim()) errs.name = "Please enter a name.";
-      if (!form.description || !form.description.trim()) errs.description = "Please add a short description.";
+      if (!form.description || !form.description.trim()) errs.description = "Please add a description.";
+      if (!form.categories || form.categories.length === 0) errs.categories = "Please select at least one category.";  
+      if (!form.tags || form.tags.length === 0) errs.tags = "Please select at least one tag.";
+    
     }
     if (s === 1) {
       if (!form.latitude || Number.isNaN(Number(form.latitude))) errs.latitude = "Valid latitude required.";
@@ -103,6 +106,7 @@ export default function NewListing() {
   }
 
   async function handleSubmit(e) {
+    setSubmitting(true);
     e?.preventDefault();
     // validate all steps before submit
     const allErrs = {
@@ -114,21 +118,18 @@ export default function NewListing() {
     if (Object.keys(allErrs).length) {
       setErrors(allErrs);
       // jump to first errored step
-      if (allErrs.name || allErrs.description || allErrs.tags) setStep(0);
+      if (allErrs.name || allErrs.description || allErrs.tags || allErrs.categories) setStep(0);
       else if (allErrs.latitude || allErrs.longitude) setStep(1);
       else if (allErrs.photos) setStep(2);
       else if (allErrs.difficulty) setStep(3);
       return;
     }
     setErrors({});
-    // TODO: replace with real API call that sends FormData including photos
-    try {
-      const listingData = await createListing(form)
-      navigate("/Explore")
-    } catch (error) {
-      throw error
-    }
-    
+    await createListing(form)
+    navigate("/Explore")
+    setSubmitting(false);
+
+
     // alert("Listing submitted!\n" + JSON.stringify({ ...form, photos: form.photos.map((f) => f.name) }, null, 2));
 
   }
@@ -136,8 +137,6 @@ export default function NewListing() {
     const n = Number(value);
     return value === "" || Number.isNaN(n) ? null : n;
   };
-
-
 
   return (
     <main className=" mt-10 bg-slate-50 min-h-screen py-10">
@@ -171,7 +170,7 @@ export default function NewListing() {
                   {errors.name && <p className="mt-1 text-xs text-rose-600">{errors.name}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="desc">Short Description</Label>
+                  <Label htmlFor="desc">Description</Label>
                   <Textarea
                     id="desc"
                     rows={4}
@@ -192,6 +191,7 @@ export default function NewListing() {
                       placeholder="Select categories…"
                       widthClassName="w-full"
                     />
+                    {errors.categories && <p className="mt-1 text-xs text-rose-600">{errors.categories}</p>}
                   </div>
 
                   {/* Tags (dependent on categories) */}
@@ -205,9 +205,10 @@ export default function NewListing() {
                       disabled={form.categories.length === 0}
                       widthClassName="w-full"
                     />
-                    {form.tags.length > 0 && (
-                      <p className="mt-2 text-xs text-slate-500">Selected tags: {form.tags.join(", ")}</p>
-                    )}
+                      {errors.tags && <p className="mt-1 text-xs text-rose-600">{errors.tags}</p>}
+                      {form.tags.length > 0 && (
+                        <p className="mt-2 text-xs text-slate-500">Selected tags: {form.tags.join(", ")}</p>
+                      )}
                   </div>
                 </div>
               </div>
@@ -371,7 +372,7 @@ export default function NewListing() {
                   <div className="text-sm font-semibold text-slate-700">Basics</div>
                   <dl className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-600">
                     <div><dt className="font-medium">Name</dt><dd>{form.name}</dd></div>
-                    <div><dt className="font-medium">Category</dt><dd>{form.category}</dd></div>
+                    <div><dt className="font-medium">Category</dt><dd>{form.categories && form.categories.length ? form.categories.join(", ") : "—"}</dd></div>
                     <div className="sm:col-span-2"><dt className="font-medium">Description</dt><dd>{form.description}</dd></div>
                     <div className="sm:col-span-2"><dt className="font-medium">Tags</dt><dd>{form.tags.join(", ") || "—"}</dd></div>
                   </dl>
@@ -421,8 +422,11 @@ export default function NewListing() {
                 type="button"
                 onClick={handleSubmit}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"
+                disabled={submitting}
+                aria-disabled={submitting}
               >
-                <CheckCircle2 className="h-4 w-4" /> Submit Listing
+                <CheckCircle2 className="h-4 w-4" /> 
+                {submitting ? "Submitting..." : "Submit Listing"}
               </button>
             )}
           </div>
