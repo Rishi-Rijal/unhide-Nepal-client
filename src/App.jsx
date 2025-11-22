@@ -23,6 +23,8 @@ import { setUser, clearUser } from './utils/authSlice.js';
 import { getUserProfile } from './api/user.api.js'
 import { refreshAccessToken } from './api/user.api.js'
 import AuthSuccess from './pages/AuthSuccess.jsx'
+import AdminDashboard from './pages/Admin/AdminDashboard.jsx'
+import AdminRoute from './Components/Admin/AdminRoute.jsx'
 
 const App = () => {
   const user = useSelector((state) => state.auth.user);
@@ -81,6 +83,7 @@ useEffect(() => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/auth/success" element={<AuthSuccess />} />
+          <Route path="/admin" element={<RequireAuth><AdminRoute><AdminDashboard /></AdminRoute></RequireAuth>} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
