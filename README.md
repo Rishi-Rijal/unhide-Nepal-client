@@ -115,12 +115,3 @@ Then restart the dev server.
 - Fork and open a PR with a clear description.
 - Run `npm install` then `npm run dev` to work locally.
 
-**Notes & TODOs**
-- Consider moving `baseURL` in `src/api/axios.api.js` to an environment variable (`VITE_API_BASE_URL`) for easier local development and deployments.
-- Add README sections for component conventions and testing if/when tests are added.
-
----
-
-If you'd like, I can:
-- add `.env`-based `VITE_API_BASE_URL` support to `src/api/axios.api.js` and update documentation,
-- or run the dev server to verify everything works locally.
