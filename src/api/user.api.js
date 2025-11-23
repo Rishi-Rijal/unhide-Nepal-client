@@ -2,9 +2,24 @@ import api from "./axios.api.js"
 
 const USER_API_BASE = "api/v1/user";
 
+let _getUserProfilePromise = null;
+
 const getUserProfile = async () => {
-    const response = await api.get(`${USER_API_BASE}/me`);
-    return response.data;
+    if (_getUserProfilePromise) return _getUserProfilePromise;
+
+    _getUserProfilePromise = api.get(`${USER_API_BASE}/me`)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((err) => {
+            _getUserProfilePromise = null;
+            throw err;
+        })
+        .finally(() => {
+            _getUserProfilePromise = null;
+        });
+
+    return _getUserProfilePromise;
 }
 
 const loginUser = async ({ email, password }) => {
@@ -19,6 +34,7 @@ const registerUser = async ({ name, password, email }) => {
 
 const logoutUser = async () => {
     const response = await api.post(`${USER_API_BASE}/logout`);
+    _getUserProfilePromise = null;
     return response.data;
 }
 
