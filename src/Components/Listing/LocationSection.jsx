@@ -8,10 +8,10 @@ const handleDirection = (latitude, longitude) => {
 
 }
 
-const LocationSection = ({ latitude, longitude, title, onOpenLocation }) => {
+const LocationSection = ({ latitude, longitude, title, onOpenLocation, authorId }) => {
   const user = useSelector((state) => state.auth.user);
   const isAdmin = user?.isAdmin;
-
+  const isOwner = (user && authorId) ? (user._id === authorId) : false;
   return (
   <section className="py-6">
     <h3 className="text-base font-semibold text-slate-900">Location</h3>
@@ -26,7 +26,7 @@ const LocationSection = ({ latitude, longitude, title, onOpenLocation }) => {
           <button onClick={() => handleDirection(latitude, longitude)} className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700">
             <Navigation className="h-4 w-4" /> Get Directions to {title}
           </button>
-          {typeof onOpenLocation === 'function' && isAdmin && (
+          {typeof onOpenLocation === 'function' && (isAdmin || isOwner) && (
             <button onClick={onOpenLocation} className="inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100">
               Edit Location
             </button>

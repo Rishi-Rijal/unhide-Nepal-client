@@ -39,6 +39,7 @@ export default function Listing() {
         locationImage: galleryImages[1]?.url || "",
         id: data._id || id,
         title: data.name,
+        authorId: data.author,
         hero: data.coverImage || galleryImages[0]?.url || "",
         rating: data.averageRating || 0,
         reviewsCount: data.ratingsCount || 0,
@@ -190,6 +191,7 @@ export default function Listing() {
           reviewsCount={listing.reviewsCount}
           likesCount={listing.likesCount}
           likedByUser={listing.likedByUser}
+          authorId={listing.authorId}
           onUpdated={fetchListing}
           onOpenOverview={openOverviewEditor}
           onOpenTips={openTipsEditor}
@@ -206,14 +208,16 @@ export default function Listing() {
           categories={listing.categories}
           latitude={listing.latitude}
           longitude={listing.longitude}
+          authorId={listing.authorId}
           onUpdated={fetchListing}
         />
 
         <GallerySection ref={galleryRef} gallery={listing.gallery} id={listing.id} onUpdated={fetchListing} />
-        <TipsSection ref={tipsRef} id={listing.id} tips={listing.tips} onUpdated={fetchListing} />
+        <TipsSection ref={tipsRef} id={listing.id} tips={listing.tips} authorId={listing.authorId} onUpdated={fetchListing} />
 
         {/* Location modal */}
         <LocationModal
+          authorId={listing.authorId}
           open={locationModalOpen}
           latitude={locationDraft.latitude}
           longitude={locationDraft.longitude}
@@ -222,13 +226,15 @@ export default function Listing() {
         />
 
         <LocationSection
+          id={listing.id}
+          authorId={listing.authorId}
           title={listing.title}
           latitude={listing.latitude}
           longitude={listing.longitude}
           onOpenLocation={openLocationModal}
         />
 
-        <ReviewsSection reviews={listing.allReviews} onAddReview={addReview} onEditReview={editReview} onDeleteReview={handleDeleteReview} />
+        <ReviewsSection reviews={listing.allReviews} authorId={listing.authorId} onAddReview={addReview} onEditReview={editReview} onDeleteReview={handleDeleteReview} />
 
         <RelatedSection related={listing.related} />
 
