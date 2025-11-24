@@ -2,12 +2,12 @@ import { useState, useRef } from "react";
 import ReviewItem from "../ReviewItem/ReviewItem";
 import ReviewForm from "../ReviewForm/ReviewForm";
 
-const ReviewsSection = ({ reviews = [], onAddReview, onEditReview, onDeleteReview }) => {
+const ReviewsSection = ({ reviews = [], onAddReview, onEditReview, onDeleteReview, authorId }) => {
   const [showForm, setShowForm] = useState(false);
   const prevScroll = useRef(null);
 
   const handleSubmit = async (data) => {
-    if (onAddReview) await onAddReview(data);
+    if (onAddReview) await onAddReview({...data, authorId});
     // close after submit and try to restore scroll
     setShowForm(false);
     try {

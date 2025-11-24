@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { LocateFixed, Plus, Search, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import PlaceCard from "../Components/PlaceCard/PlaceCard";
 import SearchBox from "../Components/SearchBox/SearchBox";
 import CategoryDropdown from "../Components/CategoryDropdown.jsx";
@@ -9,6 +10,7 @@ import axios from "axios";
 import MapView from "../Map.jsx";
 import Container from "../Components/Container/Container";
 import { getFilteredListings } from "../api/listing.api.js";
+import { getLocationFromLongLat } from "../utils/getLocation.js";
 
 const REVERSE_GEOMAPING_KEY = import.meta.env.VITE_REVERSE_GEOMAPING_KEY
 
@@ -168,11 +170,6 @@ function PlaceCardsGrid({ places }) {
   );
 }
 
-export const getLocationFromLongLat = async (lat, lng) => {
-  const location = await axios.get(`https://us1.locationiq.com/v1/reverse?key=${REVERSE_GEOMAPING_KEY}&lat=${lat}&lon=${lng}&format=json`)
-  return location.data.address;
-}
-
 
 const getLatLngFromLocationName = async (locationText) => {
   const apiKey = "82adf37af56e432ea04596b30e80b0f0";
@@ -194,7 +191,9 @@ const getLatLngFromLocationName = async (locationText) => {
 export default function Explore() {
   const [distance, setDistance] = useState(50);
   const [rating, setRating] = useState("any");
-  const [locationQuery, setLocationQuery] = useState("");
+  const [searchParams] = useSearchParams();
+  const initialQuery = searchParams.get("q") || "";
+  const [locationQuery, setLocationQuery] = useState(initialQuery);
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
   const [isMapPickerOpen, setIsMapPickerOpen] = useState(false);
@@ -294,6 +293,11 @@ export default function Explore() {
     }
 
     fetchLocation();
+  }, [location]);
+
+  useEffect(() => {
+    if (!location) return;
+    onSearch();
   }, [location]);
 
   useEffect(() => {

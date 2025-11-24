@@ -8,10 +8,10 @@ const Footer = () => (
       <div>
         <p className="mb-2 font-semibold text-slate-800">Explore</p>
         <ul className="space-y-1 text-slate-600">
-          <li><Link to="/About" className="hover:text-teal-600">About Us</Link></li>
-          <li><Link to="/Contact" className="hover:text-teal-600">Contact</Link></li>
-          <li><Link to="/PrivacyPolicy" className="hover:text-teal-600">Privacy Policy</Link></li>
-          <li><Link to="/TermsOfService" className="hover:text-teal-600">Terms of Service</Link></li>
+          <li><Link to="/about" className="hover:text-teal-600">About Us</Link></li>
+          <li><Link to="/contact" className="hover:text-teal-600">Contact</Link></li>
+          <li><Link to="/privacy-policy" className="hover:text-teal-600">Privacy Policy</Link></li>
+          <li><Link to="/terms-of-service" className="hover:text-teal-600">Terms of Service</Link></li>
         </ul>
       </div>
       <div>

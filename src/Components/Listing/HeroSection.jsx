@@ -11,13 +11,14 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "../Shared/Toast";
 import { useSelector } from "react-redux";
 
-const HeroSection = ({ id, title, hero, rating, reviewsCount, likesCount = 0, likedByUser = false, onUpdated }) => {
+const HeroSection = ({ id, title, hero, rating, reviewsCount, likesCount = 0, likedByUser = false, onUpdated, authorId }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState(title || "");
   const { showToast } = useToast();
   const user = useSelector((state) => state.auth.user);
   const isAdmin = user?.isAdmin;
+  const isOwner = (user && authorId) ? (user._id === authorId) : false;
 
   const [deleteOpen, setDeleteOpen] = useState(false);
   const navigate = useNavigate();
@@ -72,7 +73,7 @@ const HeroSection = ({ id, title, hero, rating, reviewsCount, likesCount = 0, li
                 {!isEditingTitle ? (
                   <div className="flex items-center gap-3">
                     <h1 className="text-xl sm:text-3xl font-extrabold text-slate-900 truncate">{title}</h1>
-                    {isAdmin && (
+                    {(isAdmin || isOwner) && (
                       <button aria-label="Edit title" title="Edit title" className="text-slate-500 hover:text-slate-700 p-1 rounded" onClick={() => setIsEditingTitle(true)}>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" className="inline-block">
                           <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z" />

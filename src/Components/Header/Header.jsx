@@ -110,15 +110,15 @@ const Header = () => {
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-10 lg:gap-16 text-sm">
           <Link to="/" className="text-slate-600 hover:text-cyan-700">Home</Link>
-          <Link to="/Explore" className="text-slate-600 hover:text-cyan-700">Explore</Link>
-          <Link to="/Wishlist" className="text-slate-600 hover:text-cyan-700">WishList</Link>
-          <Link to="/Listing/New" className="text-slate-600 hover:text-cyan-700">Add Place</Link>
-          <Link to="/About" className="text-slate-600 hover:text-cyan-700">About</Link>
+          <Link to="/explore" className="text-slate-600 hover:text-cyan-700">Explore</Link>
+          <Link to="/wishlist" className="text-slate-600 hover:text-cyan-700">WishList</Link>
+          <Link to="/listing/new" className="text-slate-600 hover:text-cyan-700">Add Place</Link>
+          <Link to="/about" className="text-slate-600 hover:text-cyan-700">About</Link>
         </nav>
 
         {/* Right action (desktop) */}
         {!user && (<Link
-          to="/Login"
+          to="/login"
           className="hidden md:inline-flex items-center justify-center rounded-xl border border-cyan-200 bg-white px-4 py-1.5 text-sm font-medium text-cyan-700 hover:border-cyan-300 hover:bg-cyan-50"
         >
           Login
@@ -150,13 +150,13 @@ const Header = () => {
         <div className="md:hidden border-t border-slate-200 bg-white/95 backdrop-blur">
           <nav className="px-4 py-3 flex flex-col items-start gap-2 text-sm">
             <Link onClick={() => setOpen(false)} to="/" className="py-2 text-slate-700 hover:text-cyan-700">Home</Link>
-            <Link onClick={() => setOpen(false)} to="/Explore" className="py-2 text-slate-700 hover:text-cyan-700">Explore</Link>
-            <Link onClick={() => setOpen(false)} to="/Wishlist" className="py-2 text-slate-700 hover:text-cyan-700">WishList</Link>
-            <Link onClick={() => setOpen(false)} to="/Listing/New" className="py-2 text-slate-700 hover:text-cyan-700">Add Place</Link>
-            <Link onClick={() => setOpen(false)} to="/About" className="py-2 text-slate-700 hover:text-cyan-700">About</Link>
+            <Link onClick={() => setOpen(false)} to="/explore" className="py-2 text-slate-700 hover:text-cyan-700">Explore</Link>
+            <Link onClick={() => setOpen(false)} to="/wishlist" className="py-2 text-slate-700 hover:text-cyan-700">WishList</Link>
+            <Link onClick={() => setOpen(false)} to="/listing/new" className="py-2 text-slate-700 hover:text-cyan-700">Add Place</Link>
+            <Link onClick={() => setOpen(false)} to="/about" className="py-2 text-slate-700 hover:text-cyan-700">About</Link>
             {!user && <Link
               onClick={() => setOpen(false)}
-              to="/Login"
+              to="/login"
               className="mt-2 inline-flex items-center justify-center rounded-xl border border-cyan-200 bg-white px-4 py-2 font-medium text-cyan-700 hover:border-cyan-300 hover:bg-cyan-50"
             >
               Login

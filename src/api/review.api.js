@@ -8,12 +8,13 @@ const getRatingsByListingID = async (postId) => {
     return response.data;
 }
 
-const addUserReview = async ({ postId, author, rating, text }) => {
+const addUserReview = async ({ postId, author, rating, text, authorId }) => {
     const response = await api.post(`${RATING_API_BASE}/${postId}`,
         {
             userName: author,
             rating,
-            reviewMsg: text
+            reviewMsg: text,
+            authorId
         }
     );
     return response.data;

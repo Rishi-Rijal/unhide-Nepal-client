@@ -3,7 +3,7 @@ import StarRating from "../StarRating/StarRating.jsx";
 import { useSelector } from "react-redux";
 
 export default function ReviewItem(props) {
-    const { _id, userName, reviewMsg, rating, onEdit, onDelete } = props;
+    const { _id, userName, reviewMsg, rating, onEdit, onDelete, authorId } = props;
     const [showMenu, setShowMenu] = useState(false);
     const [editing, setEditing] = useState(false);
     const [localName, setLocalName] = useState(userName || "");
@@ -12,7 +12,7 @@ export default function ReviewItem(props) {
     const [hidden, setHidden] = useState(false);
     const user = useSelector((state) => state.auth.user);
     const isAdmin = user?.isAdmin;
-
+    const isOwner = (user && authorId) ? (user._id === authorId) : false;
     if (hidden) return null;
 
     const handleSave = () => {
@@ -42,38 +42,38 @@ export default function ReviewItem(props) {
                 <div className="flex items-center gap-3">
                     <StarRating value={localRating} size={3.5} readonly={!editing} onChange={editing ? setLocalRating : undefined} />
 
-                    {isAdmin && (
-                      <div className="relative">
-                        <button
-                            onClick={() => setShowMenu((s) => !s)}
-                            className="p-1 rounded-full hover:bg-slate-100"
-                            aria-label="options"
-                        >
-                            ⋯
-                        </button>
-                        {showMenu && (
-                            <div className="absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg ring-1 ring-black/5 z-10">
-                                <button
-                                    onClick={() => {
-                                        setEditing(true);
-                                        setShowMenu(false);
-                                    }}
-                                    className="w-full text-left px-3 py-2 text-sm hover:bg-slate-50"
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        setShowMenu(false);
-                                        handleDelete();
-                                    }}
-                                    className="w-full text-left px-3 py-2 text-sm text-rose-600 hover:bg-slate-50"
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        )}
-                    </div>)}
+                    {(isAdmin || isOwner) && (
+                        <div className="relative">
+                            <button
+                                onClick={() => setShowMenu((s) => !s)}
+                                className="p-1 rounded-full hover:bg-slate-100"
+                                aria-label="options"
+                            >
+                                ⋯
+                            </button>
+                            {showMenu && (
+                                <div className="absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg ring-1 ring-black/5 z-10">
+                                    <button
+                                        onClick={() => {
+                                            setEditing(true);
+                                            setShowMenu(false);
+                                        }}
+                                        className="w-full text-left px-3 py-2 text-sm hover:bg-slate-50"
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            setShowMenu(false);
+                                            handleDelete();
+                                        }}
+                                        className="w-full text-left px-3 py-2 text-sm text-rose-600 hover:bg-slate-50"
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            )}
+                        </div>)}
                 </div>
             </div>
 

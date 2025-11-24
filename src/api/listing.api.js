@@ -1,5 +1,5 @@
 import api from "./axios.api.js";
-import { getLocationFromLongLat } from "../pages/Explore.jsx";
+import { getLocationFromLongLat } from "../utils/getLocation.js";
 
 const LISTINGS_API_BASE = "api/v1/listing";
 
