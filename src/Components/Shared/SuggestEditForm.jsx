@@ -26,16 +26,9 @@ export default function SuggestEditForm({ listingId }) {
             name: form.name.trim(),
             email: form.email.trim()
         });
-      if (!res.ok) {
-        const text = await res.text();
-        console.error('Suggest API error:', text);
-        showToast('Failed to submit suggestion', 'error');
-      } else {
-        showToast('Suggestion submitted — thank you!', 'success');
+        showToast('Suggestion submitted successfully', 'success');
         setForm({ name: "", email: "", message: "" });
-      }
     } catch (err) {
-      console.error(err);
       showToast('Failed to submit suggestion', 'error');
     } finally {
       setSubmitting(false);

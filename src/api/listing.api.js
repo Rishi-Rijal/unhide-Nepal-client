@@ -175,6 +175,7 @@ const updateTagsAndCategories = async (id, { categories = [], tags = [] } = {}) 
 }
 
 const sendSuggestion = async (id, { field, suggestion, name = "", email = "" }) => {
+  console.log('[listing.api.js] sendSuggestion called for listingId=', id);
   const response = await api.post(`/${LISTINGS_API_BASE}/${id}/suggest`, { field, suggestion, name, email });
   return response.data;
 }
