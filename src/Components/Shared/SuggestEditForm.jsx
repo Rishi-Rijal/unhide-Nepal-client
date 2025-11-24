@@ -20,11 +20,12 @@ export default function SuggestEditForm({ listingId }) {
     }
     setSubmitting(true);
     try {
-    //   will implement later
-
-        // const res = await sendSuggestion(listingId, form);
-        const res = {}
-        res.ok = true; // temp untl we have API
+        const res = await sendSuggestion(listingId, {
+            field: "general",
+            suggestion: form.message.trim(),
+            name: form.name.trim(),
+            email: form.email.trim()
+        });
       if (!res.ok) {
         const text = await res.text();
         console.error('Suggest API error:', text);

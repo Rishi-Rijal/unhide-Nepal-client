@@ -187,7 +187,7 @@ const PrivacyPolicy = () => {
             </p>
             <div className="space-y-3 text-gray-700">
               <p>
-                <span className="font-semibold">Email:</span> privacy@unhidenepal.com
+                <span className="font-semibold">Email:</span> rishirijal2025@gmail.com
               </p>
               <p>
                 <span className="font-semibold">GitHub:</span>{' '}

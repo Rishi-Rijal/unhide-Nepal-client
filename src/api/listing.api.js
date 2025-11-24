@@ -174,8 +174,8 @@ const updateTagsAndCategories = async (id, { categories = [], tags = [] } = {}) 
   return response.data;
 }
 
-const sendSuggestion = async (id, { field, suggestion }) => {
-  const response = await api.post(`/${LISTINGS_API_BASE}/${id}/suggest`, { field, suggestion });
+const sendSuggestion = async (id, { field, suggestion, name = "", email = "" }) => {
+  const response = await api.post(`/${LISTINGS_API_BASE}/${id}/suggest`, { field, suggestion, name, email });
   return response.data;
 }
 

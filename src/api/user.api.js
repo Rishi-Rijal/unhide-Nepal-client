@@ -63,6 +63,11 @@ const requestPasswordReset = async (email) => {
     return response.data;
 }
 
+const sendContactMessage = async ({ name, email, message }) => {
+    const response = await api.post(`api/v1/contact`, { name, email, message });
+    return response.data;
+}
+
 
 
 export {
@@ -74,5 +79,6 @@ export {
     refreshAccessToken,
     verifyPasswordResetToken,
     resetPassword,
-    requestPasswordReset
+    requestPasswordReset,
+    sendContactMessage
 }

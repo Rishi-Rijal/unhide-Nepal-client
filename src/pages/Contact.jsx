@@ -1,52 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Container from '../Components/Container/Container';
-import { getConsent } from '../utils/cookieConsent';
+import { sendContactMessage } from '../api/user.api.js';
 
 const emailIsValid = (email) => {
   return /^[\w.%+-]+@[\w.-]+\.[A-Za-z]{2,}$/.test(String(email).trim());
 };
 
-const loadReCaptcha = (siteKey) => {
-  if (!siteKey) return Promise.resolve(null);
-  if (window.grecaptcha) return Promise.resolve(window.grecaptcha);
-
-  return new Promise((resolve, reject) => {
-    const existing = document.getElementById('recaptcha-script');
-    if (existing) {
-      existing.addEventListener('load', () => {
-        resolve(window.grecaptcha || null);
-      });
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.id = 'recaptcha-script';
-    script.src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`;
-    script.async = true;
-    script.defer = true;
-    script.onload = () => {
-      resolve(window.grecaptcha || null);
-    };
-    script.onerror = () => resolve(null);
-    document.body.appendChild(script);
-  });
-};
 
 const Contact = () => {
   const [form, setForm] = useState({ name: '', email: '', message: '', website: '' }); // website is honeypot
   const [status, setStatus] = useState(null); // null | 'sending' | 'success' | 'error'
   const [errors, setErrors] = useState({});
-  const [recaptchaLoaded, setRecaptchaLoaded] = useState(false);
-
-  const siteKey = import.meta.env.VITE_RECAPTCHA_KEY || null;
-
-  useEffect(() => {
-    if (siteKey) {
-      loadReCaptcha(siteKey).then((gre) => {
-        if (gre) setRecaptchaLoaded(true);
-      });
-    }
-  }, [siteKey]);
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -58,7 +23,6 @@ const Contact = () => {
     if (!form.name || !form.name.trim()) err.name = 'Name is required';
     if (!form.email || !emailIsValid(form.email)) err.email = 'Please enter a valid email';
     if (!form.message || form.message.trim().length < 10) err.message = 'Message must be at least 10 characters';
-    // honeypot should be empty
     if (form.website && form.website.trim() !== '') err.website = 'Spam detected';
     return err;
   };
@@ -75,29 +39,8 @@ const Contact = () => {
     setStatus('sending');
 
     try {
-      let recaptchaToken = null;
-      if (siteKey && window.grecaptcha) {
-        // ensure grecaptcha ready and execute (v3)
-        recaptchaToken = await new Promise((resolve) => {
-          try {
-            window.grecaptcha.ready(() => {
-              window.grecaptcha.execute(siteKey, { action: 'contact' }).then(resolve).catch(() => resolve(null));
-            });
-          } catch (err) {
-            resolve(null);
-          }
-        });
-      }
-
-      const payload = { name: form.name.trim(), email: form.email.trim(), message: form.message.trim(), recaptchaToken };
-
-      // const res = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-      // if (!res.ok) throw new Error('Network error');
-
-      // For now we simulate server send
-      await new Promise((r) => setTimeout(r, 700));
-      console.log('Contact payload (simulated send):', payload);
-
+      const payload = { name: form.name.trim(), email: form.email.trim(), message: form.message.trim() };
+      await sendContactMessage(payload);
       setStatus('success');
       setForm({ name: '', email: '', message: '', website: '' });
     } catch (err) {
@@ -129,9 +72,6 @@ const Contact = () => {
             </p>
 
             <p className="text-sm text-gray-600">Or check the project on <a href="https://github.com/Rishi-Rijal" target="_blank" rel="noreferrer" className="text-cyan-600 underline">GitHub</a>.</p>
-            {siteKey && (
-              <p className="text-xs text-slate-500 mt-4">reCAPTCHA is enabled on this form for spam protection.</p>
-            )}
           </div>
 
           <div className="p-6 bg-white border border-slate-200 rounded-lg">
