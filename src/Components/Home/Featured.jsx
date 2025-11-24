@@ -24,7 +24,7 @@ const Featured = () => {
               image={listing.images && listing.images.length > 0 ? listing.images[0]["url"] : 'https://via.placeholder.com/300'}
               tag={listing.physicalAddress?.substring(0, listing.physicalAddress?.lastIndexOf(",")) || 'Unknown'}
               title={listing.name}
-              rating={listing.rating || 0}
+              rating={listing.averageRating || 0}
             />
           ))}
         </div>
