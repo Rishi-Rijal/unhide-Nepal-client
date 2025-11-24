@@ -105,7 +105,7 @@ const createListing = async ({
 
     return response.data;
   } catch (error) {
-    console.error("Error creating listing:", error);
+    console.log("Error creating listing:", error);
     throw error;
   }
 };
@@ -116,9 +116,7 @@ const getListing = async (id) => {
 }
 
 const addLike = async (id) => {
-  console.log("Adding like to listing:", id);
   const response = await api.post(`${LISTINGS_API_BASE}/${id}/like`);
-  console.log("Like added:", response);
   return response.data;
 
 }
