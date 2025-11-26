@@ -1,9 +1,9 @@
 import { useState, useRef, useImperativeHandle } from "react";
 import { useToast } from "../Shared/Toast.jsx";
-import Badge from "../Badge/Badge";
+import Badge from "../Badge/Badge.jsx";
 import CategoryDropdown from "../CategoryDropdown.jsx";
 import GROUPS from "../../utils/groups.js";
-import { updateDescription, updateTagsAndCategories } from "../../api/listing.api";
+import { updateDescription, updateTagsAndCategories } from "../../api/listing.api.js";
 import { useSelector } from "react-redux";
 
 const OverviewSection = ({ id, overview = "", tags = [], categories = [], onUpdated, authorId }, ref) => {
