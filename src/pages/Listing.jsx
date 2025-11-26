@@ -50,20 +50,42 @@ export default function Listing() {
         categories: data.categories || [],
         tips: [
           data.extraAdvice?.trim()
-            ? { title: "Extra Advice", body: data.extraAdvice.trim() }
+            ? {
+              title: "Extra Advice",
+              name: "extraTips",
+              value: data.extraAdvice.trim(),
+              body: data.extraAdvice.trim()
+            }
             : null,
 
           data.permitsRequired !== undefined && data.permitsRequired !== null
             ? {
               title: "Permits Required",
+              name: "permitsRequired",
+              value: data.permitsRequired,
               body: data.permitsRequired ? "Permits required" : "No permits required",
             }
             : null,
+          data.permitsDescription?.trim()
+            ? {
+              title: "Permit Details", name: "permitsDescription",
+              value: data.permitsDescription.trim(),
+              body: data.permitsDescription.trim()
+            }
+            : null,
           data.bestSeason?.trim()
-            ? { title: "Best Season", body: data.bestSeason.trim() }
+            ? {
+              title: "Best Season", name: "bestSeason",
+              value: data.bestSeason.trim(),
+              body: data.bestSeason.trim()
+            }
             : null,
           data.difficulty?.trim()
-            ? { title: "Difficulty", body: data.difficulty.trim() }
+            ? {
+              title: "Difficulty", name: "difficulty",
+              value: data.difficulty.trim(),
+              body: data.difficulty.trim()
+            }
             : null,
         ].filter(Boolean),
         gallery: galleryImages,

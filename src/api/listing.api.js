@@ -62,15 +62,15 @@ const getFilteredListings = async ({
 
 
 const createListing = async ({
-  name,
-  description,
-  categories,
-  tags,
-  latitude,
-  longitude,
-  tips,
-  photos,
-}) => {
+    name,
+    description,
+    categories,
+    tags,
+    latitude,
+    longitude,
+    tips,
+    photos,
+  }) => {
   try {
     const formData = new FormData();
 
@@ -79,13 +79,18 @@ const createListing = async ({
     formData.append("latitude", latitude);
     formData.append("longitude", longitude);
 
-    categories.forEach((c) => formData.append("categories", c));
-    tags.forEach((t) => formData.append("tags", t));
+    const normalizedCategories = Array.isArray(categories) ? categories : [categories].filter(Boolean);
+    const normalizedTags = Array.isArray(tags) ? tags : [tags].filter(Boolean);
+    normalizedCategories.forEach((c) => formData.append("categories", c));
+    normalizedTags.forEach((t) => formData.append("tags", t));
 
-    formData.append("tipsPermits", tips.permits);
-    formData.append("tipsBestSeason", tips.bestSeason);
-    formData.append("tipsDifficulty", tips.difficulty);
-    formData.append("tipsExtra", tips.extra);
+    formData.append("permitsRequired", tips.permitsRequired);
+    formData.append("permitsDescription", tips.permitsDescription);
+    formData.append("bestSeason", tips.bestSeason);
+    formData.append("difficulty", tips.difficulty);
+    formData.append("extraAdvice", tips.extraAdvice);
+    console.log(tips.extraAdvice, tips.permitsRequired)
+
 
     photos.forEach((file) => {
       formData.append("images", file);
@@ -94,25 +99,25 @@ const createListing = async ({
     const locationName = await getLocationFromLongLat(latitude, longitude);
     formData.append("physicalAddress",
       `${locationName?.city_district ||
-      locationName?.road ||
-      ""} ${locationName?.county ||
+      locationName?.road ||""
+      } ${locationName?.county ||
       locationName?.state ||
       ""}, ${locationName?.country}`);
 
     const response = await api.post(`/${LISTINGS_API_BASE}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
-
+    console.log("Listing created:", response.data);
     return response.data;
   } catch (error) {
-    console.log("Error creating listing:", error);
+    console.error("Error creating listing:", error);
     throw error;
   }
 };
 
 const getListing = async (id) => {
   const response = await api.get(`${LISTINGS_API_BASE}/${id}`);
-  return response.data;
+  return response.data.data;
 }
 
 const addLike = async (id) => {
@@ -175,7 +180,6 @@ const updateTagsAndCategories = async (id, { categories = [], tags = [] } = {}) 
 }
 
 const sendSuggestion = async (id, { field, suggestion, name = "", email = "" }) => {
-  console.log('[listing.api.js] sendSuggestion called for listingId=', id);
   const response = await api.post(`/${LISTINGS_API_BASE}/${id}/suggest`, { field, suggestion, name, email });
   return response.data;
 }
