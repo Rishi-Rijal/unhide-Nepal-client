@@ -18,7 +18,7 @@ jobs:
     env:
       VITE_REVERSE_GEOMAPING_KEY: ${{ secrets.VITE_REVERSE_GEOMAPING_KEY }}
       VITE_APP_API_BASE_URL: ${{ secrets.VITE_APP_API_BASE_URL }}
-      VITE_IS_PROD: $ {{ secrets.VITE_IS_PROD }}
+      VITE_IS_PROD: ${{ secrets.VITE_IS_PROD }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
