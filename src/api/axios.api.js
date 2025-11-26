@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const baseURL = "https://unhide-nepal-server-gdfeb5g8dehrfedg.germanywestcentral-01.azurewebsites.net/";
+const isProd = import.meta.env.IS_PROD === 'true' ;
+const baseURL = isProd ? import.meta.env.VITE_APP_API_BASE_URL : "http://localhost:8000";
 
 const api = axios.create({
   baseURL: baseURL,
