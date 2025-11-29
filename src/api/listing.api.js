@@ -49,11 +49,9 @@ const getFilteredListings = async ({
     params.append("lat", Number(lat));
     params.append("lng", Number(lng));
   }
-
   if (hasLatLng && distanceKm) {
     params.append("distanceKm", Number(distanceKm));
   }
-
   const url = `/${LISTINGS_API_BASE}/filter?${params.toString()}`;
   const response = await api.get(url);
   return response.data;
