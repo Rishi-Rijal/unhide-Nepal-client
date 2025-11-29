@@ -1,4 +1,4 @@
-import {Container} from '../components' // Container';
+import {Container} from '../components' 
 import { useState } from 'react';
 
 const TermsOfService = () => {
