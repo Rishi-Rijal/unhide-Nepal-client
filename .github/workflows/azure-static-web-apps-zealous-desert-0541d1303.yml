@@ -17,7 +17,7 @@ jobs:
     name: Build and Deploy Job
     env:
       VITE_REVERSE_GEOMAPING_KEY: ${{ secrets.VITE_REVERSE_GEOMAPING_KEY }}
-      VITE_APP_API_BASE_URL: ${{ secrets.VITE_SERVER_URI }}
+      VITE_SERVER_URI: ${{ secrets.VITE_SERVER_URI }}
       VITE_IS_PROD: ${{ secrets.VITE_IS_PROD }}
     steps:
       - name: Checkout repository
@@ -65,5 +65,6 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ZEALOUS_DESERT_0541D1303 }}
           action: "close"
+
 
 
