@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import Container from '../Components/Container/Container';
-import { sendContactMessage } from '../api/user.api.js';
+import {Container} from '../components' ;
+import { sendContactMessage } from '../services';
 
 const emailIsValid = (email) => {
   return /^[\w.%+-]+@[\w.-]+\.[A-Za-z]{2,}$/.test(String(email).trim());

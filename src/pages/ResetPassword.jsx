@@ -1,8 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { verifyPasswordResetToken, resetPassword } from "../api/user.api.js";
-import { useToast } from "../Components/Shared/Toast";
-
+import { verifyPasswordResetToken, resetPassword } from '../services';
+import { useToast } from '../components/common';
 const ResetPassword = () => {
   const { id, token } = useParams();
   const [password, setPassword] = useState("");
@@ -11,7 +10,7 @@ const ResetPassword = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [valid, setValid] = useState(null);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("")
   const toast = useToast();
   const navigate = useNavigate();
   const showToastRef = useRef(null);

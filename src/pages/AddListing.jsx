@@ -1,12 +1,12 @@
-import Stepper from "../Components/AddListing/Stepper.jsx";
-import { NewListingFormProvider, useFormContext } from "../Components/contexts/NewListingFormContext.jsx";
+import Stepper from '../features/addListing/Stepper.jsx';
+import { NewListingFormProvider, useFormContext } from '../contexts/NewListingFormContext.jsx';
 
-import Step1Basics from "../Components/AddListing/Step1Basics.jsx";
-import Step2Location from "../Components/AddListing/Step2Location.jsx";
-import Step3Photos from "../Components/AddListing/Step3Photos.jsx";
-import Step4Tips from "../Components/AddListing/Step4Tips.jsx";
-import Step5Review from "../Components/AddListing/Step5Review.jsx";
-import NewListingNavigation from "../Components/AddListing/NewListNavigation.jsx";
+import Step1Basics from '../features/addListing/Step1Basics.jsx';
+import Step2Location from '../features/addListing/Step2Location.jsx';
+import Step3Photos from '../features/addListing/Step3Photos.jsx';
+import Step4Tips from '../features/addListing/Step4Tips.jsx';
+import Step5Review from '../features/addListing/Step5Review.jsx';
+import NewListingNavigation from '../features/addListing/NewListNavigation.jsx';
 
 function ListingContent() {
 	const { step } = useFormContext();

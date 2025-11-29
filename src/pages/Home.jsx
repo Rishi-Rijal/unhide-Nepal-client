@@ -1,7 +1,7 @@
-import Hero from "../Components/Home/Hero";
-import Featured from "../Components/Home/Featured";
-import HowItWorks from "../Components/Home/HowItWorks";
-import CTA from "../Components/Home/CTA";
+import {Hero} from "../features/home";
+import {Featured} from "../features/home";
+import {HowItWorks} from "../features/home";
+import {CTA} from "../features/home";
 // import { setUser, clearUser } from "../store/authSlice";
 
 

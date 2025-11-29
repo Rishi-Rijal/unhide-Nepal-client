@@ -1,4 +1,4 @@
-import './App.css'
+import './styles/App.css'
 import Home from './pages/Home.jsx'
 import About from './pages/About.jsx'
 import PrivacyPolicy from './pages/PrivacyPolicy.jsx'
@@ -15,16 +15,15 @@ import ChangePassword from './pages/ChangePassword.jsx'
 import ResetPassword from './pages/ResetPassword.jsx'
 import ForgotPassword from './pages/ForgotPassword.jsx'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from './Components/Layout/Layout.jsx';
-import RequireAuth from './Components/RequireAuth.jsx';
+import { Layout } from './components/layout';
+import RequireAuth from './pages/RequireAuth.jsx';
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import { setUser, clearUser } from './utils/authSlice.js';
-import { getUserProfile } from './api/user.api.js'
-import { refreshAccessToken } from './api/user.api.js'
+import { getUserProfile, refreshAccessToken } from './services'
 import AuthSuccess from './pages/AuthSuccess.jsx'
 import AdminDashboard from './pages/Admin/AdminDashboard.jsx'
-import AdminRoute from './Components/Admin/AdminRoute.jsx'
+import { AdminRoute } from './features/admin'
 
 const App = () => {
   const user = useSelector((state) => state.auth.user);

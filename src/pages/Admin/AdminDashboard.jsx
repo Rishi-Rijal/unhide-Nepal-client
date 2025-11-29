@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import UsersTable from '../../Components/Admin/UsersTable';
-import ListingsTable from '../../Components/Admin/ListingsTable';
+import {UsersTable} from '../../features/admin';
+import {ListingsTable} from '../../features/admin';
 
 const AdminDashboard = () => {
   const [tab, setTab] = useState('users');

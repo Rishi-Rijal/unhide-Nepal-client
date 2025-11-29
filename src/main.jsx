@@ -1,8 +1,8 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
+import './styles/index.css'
 import App from './App.jsx'
-import { ToastProvider } from './Components/Shared/Toast'
+import { ToastProvider } from './components/common/Toast'
 import { Provider } from 'react-redux'
 import store from './utils/store.js'
 

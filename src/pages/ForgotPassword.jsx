@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { requestPasswordReset } from "../api/user.api.js";
-import { useToast } from "../Components/Shared/Toast";
+import { requestPasswordReset } from '../services/user.api.js';
+import { useToast } from '../components/common/Toast.jsx';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState("");
@@ -14,7 +14,6 @@ const ForgotPassword = () => {
             toast.showToast("Please enter your email", "error");
             return false;
         }
-        // basic email pattern
         const re = /\S+@\S+\.\S+/;
         if (!re.test(email)) {
             setMessage("Please enter a valid email");
@@ -46,8 +45,7 @@ const ForgotPassword = () => {
             <div className="w-full max-w-lg">
                 <div className="bg-white border border-slate-100 rounded-lg shadow-sm p-6">
                     <h1 className="text-2xl font-semibold text-slate-800 mb-1">Forgot Password</h1>
-                    <p className="text-sm text-slate-500 mb-6">Enter your account email and we'll send instructions to reset your password.</p>
-
+                    <p className="text-sm text-slate-500 mb-6">Enter your account email and we'll send instructions to reset your password.</p> 
                     <form onSubmit={handleSubmit} className="space-y-5">
                         <div>
                             {message && <p className="text-sm text-red-500 mb-2">{message}</p>}
@@ -68,7 +66,7 @@ const ForgotPassword = () => {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="inline-flex items-center rounded-md bg-cyan-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-cyan-700 disabled:opacity-60"
+                                className="inline-flex items-center rounded-lg bg-amber-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-amber-700"
                             >
                                 {loading ? "Sending..." : "Send reset link"}
                             </button>

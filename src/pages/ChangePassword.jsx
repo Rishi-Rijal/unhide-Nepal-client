@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { changePassword } from "../api/user.api.js";
-import { useToast } from "../Components/Shared/Toast";
+import { changePassword } from '../services';
+import { useToast } from '../components/common';
 
 const ChangePassword = () => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -142,7 +142,7 @@ const ChangePassword = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="inline-flex items-center rounded-md bg-cyan-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-cyan-700 disabled:opacity-60"
+                className="inline-flex items-center rounded-lg bg-amber-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-amber-700"
               >
                 {loading ? "Saving..." : "Change password"}
               </button>

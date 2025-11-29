@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import Container from '../Components/Container/Container';
+import {Container} from '../components' 
 
 const NotFound = () => {
   const navigate = useNavigate();
@@ -20,7 +20,6 @@ const NotFound = () => {
           </p>
         </div>
 
-        {/* Suggested Actions */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl">
           <div className="p-6 bg-slate-50 rounded-lg text-center hover:shadow-md transition">
             <div className="text-4xl mb-3">🏠</div>

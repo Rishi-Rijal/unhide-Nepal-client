@@ -1,20 +1,20 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import HeroSection from "../Components/Listing/HeroSection.jsx";
-import OverviewSection from "../Components/Listing/OverviewSection.jsx";
-import LocationSection from "../Components/Listing/LocationSection.jsx";
-import TipsSection from "../Components/Listing/TipsSection.jsx";
-import GallerySection from "../Components/Listing/GallerySection.jsx";
-import ReviewsSection from "../Components/Listing/ReviewsSection.jsx";
-import RelatedSection from "../Components/Listing/RelatedSection.jsx";
-import { getListing } from "../api/listing.api.js";
-import { addUserReview, updateReview, deleteReview } from "../api/review.api.js";
-import { getRatingsByListingID } from "../api/review.api.js"
-import LocationModal from "../Components/Shared/LocationModal.jsx";
-import { updateLocation } from "../api/listing.api.js";
-import { useToast } from "../Components/Shared/Toast.jsx";
-import SuggestEditForm from "../Components/Shared/SuggestEditForm.jsx";
-import Container from "../Components/Container/Container.jsx";
+import {HeroSection} from '../features/listing';
+import {OverviewSection} from '../features/listing';
+import {LocationSection} from '../features/listing';
+import {TipsSection} from '../features/listing';
+import {GallerySection} from '../features/listing';
+import {ReviewsSection} from '../features/listing';
+import {RelatedSection} from '../features/listing';
+import { getListing } from '../services';
+import { addUserReview, updateReview, deleteReview } from '../services';
+import { getRatingsByListingID } from '../services';
+import {LocationModal} from '../components/modals';
+import { updateLocation } from '../services';
+import { useToast } from '../components/common';
+import {SuggestEditForm} from '../components';
+import {Container} from '../components' 
 
 export default function Listing() {
   const { id } = useParams(); // /Listing/:id

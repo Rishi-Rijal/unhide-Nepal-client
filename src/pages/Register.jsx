@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Mail, Lock, User } from "lucide-react";
-import { Link } from "react-router-dom";
-import { registerUser } from "../api/user.api.js";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setUser } from "../utils/authSlice.js";
+import { Mail, Lock, User } from "lucide-react"; 
+import { Link } from "react-router-dom"; 
+import { registerUser } from '../services';
+import { useNavigate } from "react-router-dom"; 
+import { useDispatch } from "react-redux"; 
+import { setUser } from "../utils/authSlice.js"; 
 
 export default function RegisterPage() {
   const [form, setForm] = useState({
@@ -20,11 +20,11 @@ export default function RegisterPage() {
 
   function validate() {
     const e = {};
-    if (!form.name.trim()) e.name = "Please enter your name";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Enter a valid email";
-    if (form.password.length < 6) e.password = "Min 6 characters";
-    if (form.password !== form.confirm) e.confirm = "Passwords do not match";
-    if (!form.agree) e.agree = "Please accept the terms";
+    if (!form.name.trim()) e.name = "Please enter your name"; 
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Enter a valid email"; 
+    if (form.password.length < 6) e.password = "Min 6 characters"; 
+    if (form.password !== form.confirm) e.confirm = "Passwords do not match"; 
+    if (!form.agree) e.agree = "Please accept the terms"; 
     setErrors(e);
     return Object.keys(e).length === 0;
   }

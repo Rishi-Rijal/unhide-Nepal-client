@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "../utils/authSlice.js";
-import { getUserProfile, refreshAccessToken } from "../api/user.api.js";
+import { getUserProfile, refreshAccessToken } from '../services'
 
 export default function AuthSuccess() {
   const navigate = useNavigate();
@@ -19,7 +19,6 @@ export default function AuthSuccess() {
       } catch {
         // try to refresh token once and retry
       }
-
       try {
         await refreshAccessToken();
         const profile = await getUserProfile();

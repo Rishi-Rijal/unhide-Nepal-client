@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { Link } from "react-router-dom";
-import { loginUser } from "../api/user.api.js";
+import { loginUser } from '../services/user.api.js';
 import { useDispatch } from "react-redux";
-import { setUser } from "../utils/authSlice.js";
+import { setUser } from "../utils/authSlice.js";;
 import { useNavigate } from "react-router-dom";
-import api from "../api/axios.api.js";
 
 export default function LoginPage() {
   const dispatch = useDispatch();
@@ -120,7 +119,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => {
-                      const base = api.defaults.baseURL || import.meta.env.VITE_SERVER_URI || "";
+                      const base = import.meta.env.VITE_SERVER_URI || "";
                       const url = `${base.replace(/\/$/, "")}/api/v1/user/auth/google`;
                       window.location.href = url;
                     }}

@@ -1,6 +1,6 @@
-import PlaceCard from "../Components/PlaceCard/PlaceCard";
+import { PlaceCard } from '../features/search';
 import { getFavorites } from "../utils/favorites";
-import Container from "../Components/Container/Container";
+import { Container } from '../components';
 
 export default function Wishlist() {
   const favs = getFavorites();

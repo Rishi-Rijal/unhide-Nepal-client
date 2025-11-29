@@ -2,7 +2,7 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import GROUPS from "../utils/groups.js";
-import { createListing } from "../api/listing.api.js";
+import { createListing } from '../services';
 
 const uniq = (arr) => Array.from(new Set(arr));
 const tagsFor = (categories) => uniq(categories.flatMap((c) => GROUPS[c] || []));
@@ -14,7 +14,7 @@ const initialFormState = {
     tags: [],
     latitude: "",
     longitude: "",
-    photos: [], 
+    photos: [],
     tips: {
         permitsRequired: false,
         permitsDescription: "",
@@ -49,7 +49,7 @@ function useNewListingForm() {
     const updateForm = (updates) => {
         setForm(prev => ({ ...prev, ...updates }));
     };
-    
+
     const updateTips = (updates) => {
         setForm(prev => ({ ...prev, tips: { ...prev.tips, ...updates } }));
     };
@@ -76,9 +76,9 @@ function useNewListingForm() {
         if (s === 0) {
             if (!form.name || !form.name.trim()) errs.name = "Please enter a name.";
             if (!form.description || !(form.description.trim().length > 8)) errs.description = "Please enter a description (at least 10 characters).";
-            if (!form.categories || form.categories.length === 0) errs.categories = "Please select at least one category."; 
+            if (!form.categories || form.categories.length === 0) errs.categories = "Please select at least one category.";
             if (!form.tags || form.tags.length === 0) errs.tags = "Please select at least one tag.";
-        
+
         }
         if (s === 1) {
             if (!form.latitude || Number.isNaN(Number(form.latitude))) errs.latitude = "Valid latitude required.";
@@ -116,7 +116,7 @@ function useNewListingForm() {
             ...validateStep(2),
             ...validateStep(3),
         };
-        
+
         if (Object.keys(allErrs).length) {
             setErrors(allErrs);
             // jump to first errored step
@@ -158,4 +158,4 @@ function useNewListingForm() {
 }
 
 export default useNewListingForm;
-export { useNewListingForm};
+export { useNewListingForm };

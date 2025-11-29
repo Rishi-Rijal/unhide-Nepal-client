@@ -1,4 +1,4 @@
-import Container from '../Components/Container/Container';
+import {Container} from '../components' // Container';
 import { useState } from 'react';
 
 const TermsOfService = () => {
@@ -216,7 +216,7 @@ const TermsOfService = () => {
             </p>
             <div className="space-y-3 text-gray-700">
               <p>
-                <span className="font-semibold">Email:</span> terms@unhidenepal.com
+                <span className="font-semibold">Email:</span> rishirijal2025@gmail.com
               </p>
               <p>
                 <span className="font-semibold">GitHub:</span>{' '}
