@@ -26,7 +26,7 @@ export default function Listing() {
   const galleryRef = useRef(null);
   const [locationModalOpen, setLocationModalOpen] = useState(false);
   const [locationDraft, setLocationDraft] = useState({ latitude: null, longitude: null });
-  const { showToast } = useToast();
+  const { addToast } = useToast();
 
   async function fetchListing() {
     try {
@@ -126,10 +126,10 @@ export default function Listing() {
           reviewsCount: (prev.reviewsCount || 0) + 1,
         };
       });
-      showToast('Review added', 'success');
+      addToast('Review added', 'success');
     } catch (err) {
       console.error(err);
-      showToast('Failed to add review', 'error');
+      addToast('Failed to add review', 'error');
     }
   }
   const editReview = async (updated) => {
@@ -140,9 +140,9 @@ export default function Listing() {
         const allReviews = (base.allReviews || []).map((r) => (r._id === updated._id ? { ...r, ...updated } : r));
         return { ...base, allReviews };
       });
-      showToast('Review updated', 'success');
+      addToast('Review updated', 'success');
     } catch {
-      showToast('Failed to update review', 'error');
+      addToast('Failed to update review', 'error');
     }
   };
 
@@ -155,9 +155,9 @@ export default function Listing() {
         const reviewsCount = Math.max(0, (base.reviewsCount || 1) - 1);
         return { ...base, allReviews, reviewsCount };
       });
-      showToast('Review deleted', 'success');
+      addToast('Review deleted', 'success');
     } catch {
-      showToast('Failed to delete review', 'error');
+      addToast('Failed to delete review', 'error');
     }
   };
 
@@ -195,10 +195,10 @@ export default function Listing() {
       await updateLocation(listing.id, lat, lng);
       await fetchListing();
       setLocationModalOpen(false);
-      showToast('Location updated', 'success');
+      addToast('Location updated', 'success');
     } catch (err) {
       console.error(err);
-      showToast('Failed to update location', 'error');
+      addToast('Failed to update location', 'error');
     }
   };
 

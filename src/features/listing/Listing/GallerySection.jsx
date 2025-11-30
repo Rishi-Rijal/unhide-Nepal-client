@@ -28,7 +28,7 @@ const GallerySection = ({ gallery = [], id, onUpdated }, ref) => {
     setActiveIndex((i) => (i === items.length - 1 ? 0 : i + 1));
   };
 
-  const { showToast } = useToast();
+  const { addToast } = useToast();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmTarget, setConfirmTarget] = useState(null);
 
@@ -53,11 +53,11 @@ const GallerySection = ({ gallery = [], id, onUpdated }, ref) => {
     try {
       await removeImage(id, pid);
       if (typeof onUpdated === "function") onUpdated();
-      showToast("Image removed", "success");
+      addToast("Image removed", "success");
       if (confirmTarget.from === 'single') setActiveIndex(null);
     } catch (err) {
       console.error(err);
-      showToast("Failed to remove image", "error");
+      addToast("Failed to remove image", "error");
     } finally {
       closeConfirm();
     }
@@ -116,13 +116,13 @@ const GallerySection = ({ gallery = [], id, onUpdated }, ref) => {
       const files = pendingFiles.map((p) => p.file);
       await addImages(id, files);
       if (typeof onUpdated === 'function') onUpdated();
-      showToast('Images uploaded', 'success');
+      addToast('Images uploaded', 'success');
       (pendingFiles || []).forEach((p) => p.url && URL.revokeObjectURL(p.url));
       setPendingFiles([]);
       setPreviewOpen(false);
     } catch (err) {
       console.error(err);
-      showToast('Failed to upload images', 'error');
+      addToast('Failed to upload images', 'error');
     }
   };
 

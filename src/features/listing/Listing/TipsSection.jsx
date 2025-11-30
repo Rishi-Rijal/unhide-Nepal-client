@@ -21,7 +21,7 @@ const TipsSection = ({ id, tips = [], authorId, onUpdated }, ref) => {
   // draft will now hold string (for text fields/difficulty) OR boolean (for permitsRequired)
   const [draft, setDraft] = useState("");
   const [saving, setSaving] = useState(false);
-  const { showToast } = useToast();
+  const { addToast } = useToast();
   const rootRef = useRef(null);
   const user = useSelector((state) => state.auth.user);
   const isAdmin = user?.isAdmin; 
@@ -60,7 +60,7 @@ const TipsSection = ({ id, tips = [], authorId, onUpdated }, ref) => {
   const save = async (i, t) => {
     const field = mapTitleToField(t.title);
     if (!field) {
-      showToast("Can't edit this tip", "error");
+      addToast("Can't edit this tip", "error");
       return;
     }
     
@@ -79,7 +79,10 @@ const TipsSection = ({ id, tips = [], authorId, onUpdated }, ref) => {
       // Construct the full tips payload, including all existing tips
       const tipsPayload = {};
       tips.forEach((tip) => {
-        tipsPayload[mapTitleToField(tip.title)] = tip.value;
+        const field = mapTitleToField(tip.title);
+        if (field && tip.value !== undefined && tip.value !== null) {
+          tipsPayload[field] = tip.value;
+        }
       });
       
       const finalPayload = { ...tipsPayload, ...payload };
@@ -87,10 +90,10 @@ const TipsSection = ({ id, tips = [], authorId, onUpdated }, ref) => {
       
       if (typeof onUpdated === "function") onUpdated();
       cancel();
-      showToast("Tip saved", "success");
+      addToast("Tip saved", "success");
     } catch (err) {
       console.error(err);
-      showToast("Failed to save tip", "error");
+      addToast("Failed to save tip", "error");
     } finally {
       setSaving(false);
     }

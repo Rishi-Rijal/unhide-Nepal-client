@@ -15,7 +15,7 @@ const HeroSection = ({ id, title, hero, rating, reviewsCount, likesCount = 0, li
   const [menuOpen, setMenuOpen] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState(title || "");
-  const { showToast } = useToast();
+  const { addToast } = useToast();
   const user = useSelector((state) => state.auth.user);
   const isAdmin = user?.isAdmin;
   const isOwner = (user && authorId) ? (user._id === authorId) : false;
@@ -26,11 +26,11 @@ const HeroSection = ({ id, title, hero, rating, reviewsCount, likesCount = 0, li
   const handleDelete = async () => {
     try {
       await deleteListing(id);
-      showToast('Listing deleted', 'success');
+      addToast('Listing deleted', 'success');
       navigate('/Explore');
     } catch (err) {
       console.error(err);
-      showToast('Failed to delete listing', 'error');
+      addToast('Failed to delete listing', 'error');
     } finally {
       setDeleteOpen(false);
     }
@@ -39,17 +39,17 @@ const HeroSection = ({ id, title, hero, rating, reviewsCount, likesCount = 0, li
 
   const saveTitle = async () => {
     if (!titleDraft || !titleDraft.trim()) {
-      showToast("Title cannot be empty", "error");
+      addToast("Title cannot be empty", "error");
       return;
     }
     try {
       await updateTitle(id, titleDraft.trim());
       if (typeof onUpdated === "function") onUpdated();
       setIsEditingTitle(false);
-      showToast("Title updated", "success");
+      addToast("Title updated", "success");
     } catch (err) {
       console.error(err);
-      showToast("Failed to update title", "error");
+      addToast("Failed to update title", "error");
     }
   };
 

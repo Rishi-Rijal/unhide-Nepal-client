@@ -7,7 +7,7 @@ const UsersTable = () => {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
 
-  const { showToast } = useToast();
+  const { addToast } = useToast();
 
   const load = async () => {
     try {
@@ -15,7 +15,7 @@ const UsersTable = () => {
       setUsers(res.data.data.users);
       setTotal(res.data.data.total);
     } catch (err) {
-      showToast(err?.response?.data?.message || 'Failed to load users', 'error');
+      addToast(err?.response?.data?.message || 'Failed to load users', 'error');
     }
   };
 
@@ -24,10 +24,10 @@ const UsersTable = () => {
   const onToggleAdmin = async (u) => {
     try {
       await updateUserRole(u._id, { isAdmin: !u.isAdmin });
-      showToast('User role updated', 'info');
+      addToast('User role updated', 'info');
       load();
     } catch (err) {
-      showToast(err?.response?.data?.message || 'Failed to update role', 'error');
+      addToast(err?.response?.data?.message || 'Failed to update role', 'error');
     }
   };
 
@@ -35,10 +35,10 @@ const UsersTable = () => {
     if (!confirm(`Delete user ${u.email}? This cannot be undone.`)) return;
     try {
       await deleteUser(u._id);
-      showToast('User deleted', 'info');
+      addToast('User deleted', 'info');
       load();
     } catch (err) {
-      showToast(err?.response?.data?.message || 'Failed to delete user', 'error');
+      addToast(err?.response?.data?.message || 'Failed to delete user', 'error');
     }
   };
 

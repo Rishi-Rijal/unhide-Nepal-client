@@ -11,7 +11,7 @@ const OverviewSection = ({ id, overview = "", tags = [], categories = [], onUpda
   const [value, setValue] = useState(overview);
   const [saving, setSaving] = useState(false);
   const rootRef = useRef(null);
-  const { showToast } = useToast();
+  const { addToast } = useToast();
   const [editingMeta, setEditingMeta] = useState(false);
   const [localCategories, setLocalCategories] = useState(categories || []);
   const [localTags, setLocalTags] = useState(tags || []);
@@ -39,10 +39,10 @@ const OverviewSection = ({ id, overview = "", tags = [], categories = [], onUpda
       await updateDescription(id, value);
       if (typeof onUpdated === "function") onUpdated();
       setEditing(false);
-      showToast("Description saved", "success");
+      addToast("Description saved", "success");
     } catch (err) {
       console.error(err);
-      showToast("Failed to save description", "error");
+      addToast("Failed to save description", "error");
     } finally {
       setSaving(false);
     }
@@ -54,10 +54,10 @@ const OverviewSection = ({ id, overview = "", tags = [], categories = [], onUpda
       await updateTagsAndCategories(id, { categories: localCategories, tags: localTags });
       if (typeof onUpdated === "function") onUpdated();
       setEditingMeta(false);
-      showToast("Tags & categories saved", "success");
+      addToast("Tags & categories saved", "success");
     } catch (err) {
       console.error(err);
-      showToast("Failed to save tags & categories", "error");
+      addToast("Failed to save tags & categories", "error");
     } finally {
       setSaving(false);
     }

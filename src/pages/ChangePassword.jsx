@@ -11,20 +11,20 @@ const ChangePassword = () => {
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
-  const toast = useToast();
+  const { addToast } = useToast();
   const navigate = useNavigate();
 
   const validate = () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
-      toast.showToast("Please fill all fields", "error");
+      addToast("Please fill all fields", "error");
       return false;
     }
     if (newPassword.length < 8) {
-      toast.showToast("New password must be at least 8 characters", "error");
+      addToast("New password must be at least 8 characters", "error");
       return false;
     }
     if (newPassword !== confirmPassword) {
-      toast.showToast("New password and confirm do not match", "error");
+      addToast("New password and confirm do not match", "error");
       return false;
     }
     return true;
@@ -36,11 +36,11 @@ const ChangePassword = () => {
     setLoading(true);
     try {
       await changePassword({ currentPassword, newPassword, confirmPassword });
-      toast.showToast("Password changed successfully", "info");
+      addToast("Password changed successfully", "info");
       navigate("/");
     } catch (err) {
       const msg = err?.response?.data?.message || "Failed to change password";
-      toast.showToast(msg, "error");
+      addToast(msg, "error");
     } finally {
       setLoading(false);
     }
