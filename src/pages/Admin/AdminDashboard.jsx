@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import {UsersTable} from '../../features/admin';
-import {ListingsTable} from '../../features/admin';
+import {UsersTable, ListingsTable, AgentListing} from '../../features/admin';
 
 const AdminDashboard = () => {
   const [tab, setTab] = useState('users');
@@ -13,11 +12,13 @@ const AdminDashboard = () => {
         <div className="mb-6">
           <button className={`px-4 py-2 mr-2 rounded ${tab==='users' ? 'bg-blue-600 text-white' : 'bg-white'}`} onClick={() => setTab('users')}>Users</button>
           <button className={`px-4 py-2 mr-2 rounded ${tab==='listings' ? 'bg-blue-600 text-white' : 'bg-white'}`} onClick={() => setTab('listings')}>Listings</button>
+          <button className={`px-4 py-2 mr-2 rounded ${tab==='ai-agent' ? 'bg-blue-600 text-white' : 'bg-white'}`} onClick={() => setTab('ai-agent')}>AI Agent</button>
         </div>
 
         <div>
           {tab === 'users' && <UsersTable />}
           {tab === 'listings' && <ListingsTable />}
+          {tab === 'ai-agent' && <AgentListing />}
         </div>
       </div>
     </div>
