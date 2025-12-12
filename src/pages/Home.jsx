@@ -1,5 +1,6 @@
 import {Hero} from "../features/home";
 import {Featured} from "../features/home";
+import {ExploreMore} from "../features/home";
 import {HowItWorks} from "../features/home";
 import {CTA} from "../features/home";
 // import { setUser, clearUser } from "../store/authSlice";
@@ -10,6 +11,7 @@ export default function Home() {
     <div className="min-h-screen bg-white text-slate-900">
       <Hero />
       <Featured />
+      <ExploreMore />
       <HowItWorks />
       <CTA />
     </div>
