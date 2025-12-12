@@ -3,7 +3,7 @@ import { useToast } from "../../components";
 import { sendSuggestion } from "../../services/listing.api.js";
 
 export default function SuggestEditForm({ listingId }) {
-  const { showToast } = useToast();
+  const { addToast } = useToast();
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [submitting, setSubmitting] = useState(false);
 
@@ -15,7 +15,7 @@ export default function SuggestEditForm({ listingId }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.message.trim()) {
-      showToast('Please enter your suggestion', 'error');
+      addToast('Please enter your suggestion', 'error');
       return;
     }
     setSubmitting(true);
@@ -26,10 +26,11 @@ export default function SuggestEditForm({ listingId }) {
             name: form.name.trim(),
             email: form.email.trim()
         });
-        showToast('Suggestion submitted successfully', 'success');
+        console.log("Suggestion response:", res);
+        addToast('Suggestion submitted successfully', 'success');
         setForm({ name: "", email: "", message: "" });
     } catch (err) {
-      showToast('Failed to submit suggestion', 'error');
+      addToast('Failed to submit suggestion', 'error');
     } finally {
       setSubmitting(false);
     }

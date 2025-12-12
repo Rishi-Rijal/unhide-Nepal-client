@@ -6,18 +6,18 @@ const ForgotPassword = () => {
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
-    const toast = useToast();
+    const { addToast } = useToast();
 
     const validate = () => {
         if (!email) {
             setMessage("Please enter your email");
-            toast.showToast("Please enter your email", "error");
+            addToast("Please enter your email", "error");
             return false;
         }
         const re = /\S+@\S+\.\S+/;
         if (!re.test(email)) {
             setMessage("Please enter a valid email");
-            toast.showToast("Please enter a valid email", "error");
+            addToast("Please enter a valid email", "error");
             return false;
         }
         return true;
@@ -30,11 +30,11 @@ const ForgotPassword = () => {
         try {
             await requestPasswordReset(email);
             setMessage("If that email is registered you will receive reset instructions.");
-            toast.showToast("If that email is registered you will receive reset instructions.", "info");
+            addToast("If that email is registered you will receive reset instructions.", "info");
         } catch (err) {
             setMessage(err?.response?.data?.message || "Failed to request password reset");
             const msg = err?.response?.data?.message || "Failed to request password reset";
-            toast.showToast(msg, "error");
+            addToast(msg, "error");
         } finally {
             setLoading(false);
         }

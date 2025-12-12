@@ -7,7 +7,7 @@ const ListingsTable = () => {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
 
-  const { showToast } = useToast();
+  const { addToast } = useToast();
 
   const load = async () => {
     try {
@@ -15,7 +15,7 @@ const ListingsTable = () => {
       setListings(res.data.data.listings);
       setTotal(res.data.data.total);
     } catch (err) {
-      showToast(err?.response?.data?.message || 'Failed to load listings', 'error');
+      addToast(err?.response?.data?.message || 'Failed to load listings', 'error');
     }
   };
 
@@ -24,10 +24,10 @@ const ListingsTable = () => {
   const onVerify = async (l) => {
     try {
       await verifyListing(l._id, { isVerified: !l.isVerified });
-      showToast('Listing updated', 'info');
+      addToast('Listing updated', 'info');
       load();
     } catch (err) {
-      showToast(err?.response?.data?.message || 'Failed to update listing', 'error');
+      addToast(err?.response?.data?.message || 'Failed to update listing', 'error');
     }
   };
 
@@ -35,10 +35,10 @@ const ListingsTable = () => {
     if (!confirm(`Delete listing ${l.name}? This cannot be undone.`)) return;
     try {
       await deleteListing(l._id);
-      showToast('Listing deleted', 'info');
+      addToast('Listing deleted', 'info');
       load();
     } catch (err) {
-      showToast(err?.response?.data?.message || 'Failed to delete listing', 'error');
+      addToast(err?.response?.data?.message || 'Failed to delete listing', 'error');
     }
   };
 

@@ -11,15 +11,15 @@ const ResetPassword = () => {
   const [loading, setLoading] = useState(false);
   const [valid, setValid] = useState(null);
   const [errorMessage, setErrorMessage] = useState("")
-  const toast = useToast();
+  const { addToast } = useToast();
   const navigate = useNavigate();
-  const showToastRef = useRef(null);
+  const addToastRef = useRef(null);
 
   // Keep a stable reference to the toast function so we don't need to add the
   // toast object to effect dependency arrays (which can change identity on each render).
   useEffect(() => {
-    showToastRef.current = toast?.showToast;
-  }, [toast]);
+    addToastRef.current = addToast;
+  }, [addToast]);
 
   // Verify token when params change. We avoid calling toast directly here to
   // prevent effect loops if the toast hook returns a new object identity.
@@ -43,23 +43,23 @@ const ResetPassword = () => {
   }, [id, token]);
 
   useEffect(() => {
-    if (errorMessage && showToastRef.current) {
+    if (errorMessage && addToastRef.current) {
       // call stable ref to avoid re-running when toast identity changes
-      showToastRef.current(errorMessage, "error");
+      addToastRef.current(errorMessage, "error");
     }
   }, [errorMessage]);
 
   const validate = () => {
     if (!password || !confirmPassword) {
-      toast.showToast("Please fill both password fields", "error");
+      addToast("Please fill both password fields", "error");
       return false;
     }
     if (password.length < 8) {
-      toast.showToast("Password must be at least 8 characters", "error");
+      addToast("Password must be at least 8 characters", "error");
       return false;
     }
     if (password !== confirmPassword) {
-      toast.showToast("Passwords do not match", "error");
+      addToast("Passwords do not match", "error");
       return false;
     }
     return true;
@@ -71,11 +71,11 @@ const ResetPassword = () => {
     setLoading(true);
     try {
       await resetPassword({ id, token, password, confirmPassword });
-      toast.showToast("Password reset successful. You can now log in.", "info");
+      addToast("Password reset successful. You can now log in.", "info");
       navigate("/Login");
     } catch (err) {
       const msg = err?.response?.data?.message || "Failed to reset password";
-      toast.showToast(msg, "error");
+      addToast(msg, "error");
     } finally {
       setLoading(false);
     }

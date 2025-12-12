@@ -169,14 +169,14 @@ const deleteListing = async (id) => {
   return response.data;
 }
 
-const updateTagsAndCategories = async (id, { categories = [], tags = [] } = {}) => {
+const updateTagsAndCategories = async (id, { categories = [], tags = [] } = {}) => {  
   const response = await api.patch(`/${LISTINGS_API_BASE}/${id}/tags-categories`, { categories, tags });
   return response.data;
 }
 
 const sendSuggestion = async (id, { field, suggestion, name = "", email = "" }) => {
   const response = await api.post(`/${LISTINGS_API_BASE}/${id}/suggest`, { field, suggestion, name, email });
-  return response.data;
+  return response;
 }
 
 export {

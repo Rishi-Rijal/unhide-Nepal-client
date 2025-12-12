@@ -7,6 +7,8 @@ import markerIcon from "../../public/web-logo.png";
 const DEFAULT_LAT = 27.7172;
 const DEFAULT_LNG = 85.3240;
 
+const API_KEY = import.meta.env.VITE_STADIA_API_KEY;
+
 // Helpers to keep maplibre happy
 function toValidLat(value, fallback = DEFAULT_LAT) {
   const n = Number(value);
@@ -50,8 +52,8 @@ export default function MapView({
   }, [mode]);
 
   const MAP_STYLES = {
-    satellite: "https://tiles.stadiamaps.com/styles/alidade_satellite.json",
-    terrain: "https://tiles.stadiamaps.com/styles/outdoors.json",
+    satellite: `https://tiles.stadiamaps.com/styles/alidade_satellite.json?api_key=${API_KEY}`,
+    terrain: `https://tiles.stadiamaps.com/styles/outdoors.json?api_key=${API_KEY}`,
   };
 
   // 1) Initialize map once
