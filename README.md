@@ -1,7 +1,7 @@
 This project is hosted at: https://zealous-desert-0541d1303.3.azurestaticapps.net/
-# Unhide Nepal — Client
+# Unhide   — Client
 
-This is the React client for the Unhide Nepal project — a listing/explore web app built with Vite, React and Tailwind CSS. The client communicates with the server API for authentication, listings, reviews and admin functions.
+This is the React client for the Unhide   project — a listing/explore web app built with Vite, React and Tailwind CSS. The client communicates with the server API for authentication, listings, reviews and admin functions.
 
 **Quick summary**
 - **Tech stack:** `React`, `Vite`, `Tailwind CSS`, `Redux` (`@reduxjs/toolkit`), `axios`.
@@ -16,7 +16,7 @@ This is the React client for the Unhide Nepal project — a listing/explore web 
 - Admin endpoints for listing/user management.
 
 **Repository**
-This README covers the client app located at the repository root of `unhide-Nepal-client`.
+This README covers the client app located at the repository root of `unhide- -client`.
 
 **Prerequisites**
 - Node.js (v16+ recommended)
@@ -26,8 +26,8 @@ This README covers the client app located at the repository root of `unhide-Nepa
 1. Clone the repo and change into the client folder:
 
 ```bash
-git clone https://github.com/Rishi-Rijal/unhide-Nepal-client.git
-cd unhide-Nepal-client
+git clone https://github.com/Rishi-Rijal/unhide- -client.git
+cd unhide- -client
 ```
 
 2. Install dependencies:
